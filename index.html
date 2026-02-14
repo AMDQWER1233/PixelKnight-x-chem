@@ -3,483 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHEM-X: Ultimate A/L Resource</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet">
+    <title>AMOD'S CHEM LAB | Ultimate Version</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+Sinhala:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
         :root {
-            --neon-blue: #00f3ff;
-            --neon-purple: #bc13fe;
-            --neon-green: #0aff0a;
-            --neon-red: #ff003c;
+            --primary: #00f3ff;
+            --secondary: #bc13fe;
             --dark-bg: #050505;
-            --panel-bg: rgba(10, 10, 10, 0.85);
-            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --panel: #111;
+            --text: #fff;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        * { box-sizing: border-box; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
         body {
-            margin: 0;
             background-color: var(--dark-bg);
-            color: #fff;
+            color: var(--text);
             font-family: 'Rajdhani', 'Noto Sans Sinhala', sans-serif;
-            overflow-x: hidden;
+            overflow-x: hidden; /* Hide scrollbar during intro */
         }
 
-        /* MATRIX BACKGROUND */
-        #matrix-canvas {
+        /* --- PRELOADER (INTRO ANIMATION) --- */
+        #preloader {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.15;
-        }
-
-        /* NAVIGATION */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 5%;
-            background: rgba(0,0,0,0.8);
-            border-bottom: 1px solid var(--neon-blue);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-            font-weight: 700;
-        }
-
-        .nav-links button {
-            background: transparent;
-            border: none;
-            color: #fff;
-            margin-left: 20px;
-            font-family: 'Orbitron';
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.3s;
-        }
-
-        .nav-links button:hover, .nav-links button.active {
-            color: var(--neon-green);
-            text-shadow: 0 0 8px var(--neon-green);
-        }
-
-        /* MAIN CONTENT */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .section {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .section.active { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* HERO SECTION */
-        .hero {
-            text-align: center;
-            padding: 50px 0;
-        }
-        
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* DASHBOARD CARDS */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .card {
-            background: var(--panel-bg);
-            border: var(--border);
-            padding: 20px;
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
-            border-color: var(--neon-blue);
-        }
-
-        .card h3 {
-            margin-top: 0;
-            color: var(--neon-blue);
-            font-family: 'Orbitron';
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 10px;
-        }
-
-        /* CHEMISTRY SIMULATION ELEMENTS */
-        .beaker-box {
-            height: 120px;
-            background: rgba(255,255,255,0.05);
-            margin: 10px 0;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 9999;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .typing-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--primary);
+            border-right: 2px solid var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
+        }
+
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--primary); } }
+
+        .fade-out { opacity: 0; pointer-events: none; transition: opacity 1s ease; }
+
+        /* --- MAIN LAYOUT --- */
+        .container {
+            display: flex;
+            min-height: 100vh;
+            opacity: 0; /* Hidden initially */
+            transition: opacity 1s ease;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 10, 10, 0.95);
+            border-right: 1px solid #333;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .content {
+            margin-left: 280px;
+            padding: 30px;
+            width: 100%;
+        }
+
+        /* --- STYLES --- */
+        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--primary); }
+        
+        .nav-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background: transparent;
+            border: 1px solid #333;
+            color: #aaa;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Orbitron';
+            transition: 0.3s;
             border-radius: 5px;
         }
 
-        .liquid {
-            width: 60px;
-            height: 80px;
-            border-radius: 0 0 5px 5px;
-            transition: background 1.5s, height 0.5s;
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--glass);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+        }
+
+        .section { display: none; animation: slideUp 0.5s ease; }
+        .section.active { display: block; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* CARDS */
+        .card {
+            background: var(--panel);
+            border: 1px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
             position: relative;
         }
+        .card:hover { border-color: var(--secondary); }
 
-        /* Specific Colors */
-        .bg-purple { background: #800080; box-shadow: 0 0 15px #800080; }
-        .bg-colorless { background: rgba(255,255,255,0.1); box-shadow: none; }
-        .bg-orange { background: #ff8c00; box-shadow: 0 0 15px #ff8c00; }
-        .bg-green { background: #008000; box-shadow: 0 0 15px #008000; }
-        .bg-brown-ppt { background: #5d4037; opacity: 1; }
-        .bg-blue-dark { background: #00008b; }
-        .bg-white-ppt { background: #fff; opacity: 0.9; }
-        .bg-yellow-ppt { background: #ffd700; opacity: 0.9; }
-
-        .btn-action {
-            width: 100%;
-            padding: 10px;
-            background: transparent;
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            font-family: 'Orbitron';
-            cursor: pointer;
-            transition: 0.2s;
-            margin-top: 10px;
-        }
-
-        .btn-action:hover {
-            background: var(--neon-green);
+        .tag {
+            background: var(--secondary);
             color: #000;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 5px;
         }
 
-        .equation {
-            font-family: monospace;
-            font-size: 0.9em;
-            color: #ccc;
-            background: #111;
-            padding: 5px;
-            margin-top: 5px;
-            display: block;
-        }
-
-        .trick {
-            font-size: 0.85em;
-            color: #ffd700;
-            margin-top: 5px;
-        }
-
-        /* CALCULATOR SECTION */
-        .calc-box {
-            max-width: 500px;
-            margin: 0 auto;
-            background: var(--panel-bg);
-            padding: 30px;
-            border: 1px solid var(--neon-purple);
-            border-radius: 15px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group label { display: block; margin-bottom: 5px; color: #aaa; }
-        .input-group input {
+        /* SEARCH BAR */
+        .search-box {
             width: 100%;
-            padding: 10px;
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
-            font-family: monospace;
-        }
-
-        .result-display {
-            margin-top: 20px;
             padding: 15px;
-            background: rgba(188, 19, 254, 0.1);
-            border: 1px solid var(--neon-purple);
-            text-align: center;
-            font-size: 1.5rem;
-            color: var(--neon-purple);
+            background: #111;
+            border: 1px solid var(--primary);
+            color: #fff;
+            font-family: 'Orbitron';
+            margin-bottom: 20px;
+            font-size: 1.1rem;
         }
 
-        /* FOOTER */
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #555;
-            font-size: 0.8rem;
-            margin-top: 50px;
-            border-top: 1px solid #111;
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 1px solid #333; }
+            .content { margin-left: 0; }
+            .container { flex-direction: column; }
+            .typing-text { font-size: 1rem; }
+        }
+
+        /* CHAT BUBBLE STYLE FOR NOTES */
+        .chat-bubble {
+            background: rgba(0, 243, 255, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
+    <div id="preloader">
+        <div class="typing-text" id="type-text"></div>
+    </div>
 
-    <nav>
-        <div class="logo">CHEM-X <span style="font-size:0.5em; color:#fff;">v1.0</span></div>
-        <div class="nav-links">
-            <button onclick="showSection('home')" class="active" id="btn-home">HOME</button>
-            <button onclick="showSection('reactions')" id="btn-reactions">REACTIONS</button>
-            <button onclick="showSection('calculator')" id="btn-calculator">CALCULATOR</button>
-        </div>
-    </nav>
-
-    <main>
+    <div class="container" id="main-container">
         
-        <section id="home" class="section active">
-            <div class="hero">
-                <h1>A/L CHEMISTRY MASTER</h1>
-                <p>Advanced Level Chemical Calculations & Redox Simulations</p>
-                <div style="margin-top: 20px;">
-                    <span style="color: var(--neon-green); border: 1px solid var(--neon-green); padding: 5px 10px;">ONLINE</span>
-                    <span style="color: var(--neon-blue); border: 1px solid var(--neon-blue); padding: 5px 10px; margin-left: 10px;">SYSTEM READY</span>
-                </div>
-            </div>
-
-            <div class="grid">
-                <div class="card">
-                    <h3>🚀 Quick Stats</h3>
-                    <p>Total Reactions: 8+</p>
-                    <p>Mediums: Acidic / Basic</p>
-                    <p>Calculators: Moles / Conc.</p>
-                </div>
-                <div class="card">
-                    <h3>💡 Exam Tips</h3>
-                    <p>1. Always balance electrons first.</p>
-                    <p>2. Check the medium ($H^+$ or $OH^-$).</p>
-                    <p>3. Remember $n = CV$.</p>
-                </div>
-                <div class="card" style="border-color: var(--neon-red);">
-                    <h3>⚠️ Common Mistakes</h3>
-                    <p>Forgetting to multiply the entire half-reaction when balancing electrons.</p>
-                    <p>Confusing $MnO_4^-$ colors in Basic vs Acidic.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="reactions" class="section">
-            <h2 style="color:var(--neon-blue)">CHEMICAL DATABASE</h2>
+        <nav class="sidebar">
+            <h2 style="margin-bottom: 30px; text-align: center;">CHEM <span style="color:#fff">HUB</span></h2>
+            <button class="nav-btn active" onclick="show('dashboard')"><i class="fas fa-home"></i> Home</button>
+            <button class="nav-btn" onclick="show('reactions')"><i class="fas fa-flask"></i> All Reactions (DB)</button>
+            <button class="nav-btn" onclick="show('theory')"><i class="fas fa-book"></i> Theory (සිංහල)</button>
+            <button class="nav-btn" onclick="show('calc')"><i class="fas fa-calculator"></i> Calculator</button>
+            <button class="nav-btn" onclick="show('papers')"><i class="fas fa-file-alt"></i> Past Papers</button>
             
-            <div style="margin-bottom: 20px;">
-                <button onclick="filterReactions('all')" class="btn-action" style="width: auto;">ALL</button>
-                <button onclick="filterReactions('acid')" class="btn-action" style="width: auto;">ACIDIC</button>
-                <button onclick="filterReactions('base')" class="btn-action" style="width: auto;">BASIC</button>
-                <button onclick="filterReactions('ppt')" class="btn-action" style="width: auto;">PRECIPITATES</button>
+            <div style="margin-top: 50px; font-size: 0.8rem; color: #555; text-align: center;">
+                Admin: Pixel Knight (Amod)<br>
+                v2.0 Ultimate
+            </div>
+        </nav>
+
+        <main class="content">
+
+            <div id="dashboard" class="section active">
+                <h1>Welcome, Amod.</h1>
+                <p style="color:#aaa;">ලංකාවේ අංක එකේ Chemistry Database එක.</p>
+                <br>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div class="card" style="border-top: 3px solid var(--primary);">
+                        <h3>Total Reactions</h3>
+                        <h1 style="color:#fff">25+</h1>
+                        <p>Inorganic & Organic covered.</p>
+                    </div>
+                    <div class="card" style="border-top: 3px solid var(--secondary);">
+                        <h3>Exam Target</h3>
+                        <h1 style="color:#fff">2027</h1>
+                        <p>Maths / Bio Stream</p>
+                    </div>
+                </div>
+
+                <div class="chat-bubble" style="margin-top: 30px;">
+                    <strong>📢 Admin Note:</strong><br>
+                    මචං මේකේ මම දන්න හැම රෙද්දම දැම්මා. S-block, D-block, Anions, Cations ඔක්කොම තියෙනවා. Search Bar එකෙන් නම ගහලා හොයාගනින්. අර පරණ $ ලකුණු ප්‍රශ්නෙත් හරි. දැන් ගණන් හදන්න ලේසියි.
+                </div>
             </div>
 
-            <div class="grid" id="reaction-grid">
-                </div>
-        </section>
+            <div id="reactions" class="section">
+                <h1>CHEMICAL DATABASE</h1>
+                <input type="text" class="search-box" id="searchInp" onkeyup="filterReactions()" placeholder="Search (e.g., KMnO4, Li, Nitrate)...">
+                
+                <div id="reaction-grid">
+                    </div>
+            </div>
 
-        <section id="calculator" class="section">
-            <h2 style="color:var(--neon-purple)">MOLE CALCULATOR</h2>
-            
-            <div class="grid">
-                <div class="calc-box">
-                    <h3>Mass ➝ Moles ($n = m/M$)</h3>
-                    <div class="input-group">
-                        <label>Mass (g)</label>
-                        <input type="number" id="mass-input" placeholder="Enter mass">
+            <div id="theory" class="section">
+                <h1>KUPPI NOTES (සිංහල)</h1>
+                
+                <div class="card">
+                    <h3>1. Flame Tests (දැල්ලේ වර්ණ)</h3>
+                    <p>S- ගොනුවේ කට්ටිය රත් කරාම එන පාට මතක තියාගනින්.</p>
+                    <ul>
+                        <li>$Li$ - ක්‍රිම්සන් රතු (Crimson Red)</li>
+                        <li>$Na$ - රන්වන් කහ (Golden Yellow)</li>
+                        <li>$K$ - ලිලැක් (Lilac)</li>
+                        <li>$Ca$ - ගඩොල් රතු (Brick Red)</li>
+                        <li>$Sr$ - ක්‍රිම්සන් (Crimson)</li>
+                        <li>$Ba$ - ඇපල් කොළ (Apple Green)</li>
+                    </ul>
+                    <div class="chat-bubble">
+                        Tip: $Mg$ සහ $Be$ පාටක් දෙන්නේ නෑ බන්. ඒක මතක තියාගනින්.
                     </div>
-                    <div class="input-group">
-                        <label>Molar Mass (g/mol)</label>
-                        <input type="number" id="mm-input" placeholder="e.g. C=12, O=16 -> CO2=44">
-                    </div>
-                    <button class="btn-action" onclick="calcMoles()">CALCULATE</button>
-                    <div class="result-display" id="mole-result">0.00 mol</div>
                 </div>
 
-                <div class="calc-box">
-                    <h3>Conc/Vol ➝ Moles ($n = CV$)</h3>
-                    <div class="input-group">
-                        <label>Concentration (mol dm⁻³)</label>
-                        <input type="number" id="conc-input" placeholder="C">
+                <div class="card">
+                    <h3>2. Nitrate Decomposition (නයිට්‍රේට වියෝජනය)</h3>
+                    <p>මේක Exam එකට අනිවා එනවා.</p>
+                    <p>$\textbf{Li, Ca, Sr, Ba}$ වගේ අය කැඩුනම හැදෙන්නේ Oxide එක.</p>
+                    <p>$$2M(NO_3)_2 \rightarrow 2MO + 4NO_2 + O_2$$</p>
+                    <p>$\textbf{Na, K}$ (සෝඩියම්, පොටෑසියම්) කැඩුනම හැදෙන්නේ නයිට්‍රයිට් ($NO_2^-$).</p>
+                    <p>$$2KNO_3 \rightarrow 2KNO_2 + O_2$$</p>
+                    <div class="chat-bubble">
+                        වැදගත්: $NO_2$ වායුව දුඹුරු පාටයි. $O_2$ පාටක් නෑ.
                     </div>
-                    <div class="input-group">
-                        <label>Volume (cm³)</label>
-                        <input type="number" id="vol-input" placeholder="V in ml">
-                    </div>
-                    <button class="btn-action" onclick="calcCV()">CALCULATE</button>
-                    <div class="result-display" id="cv-result">0.00 mol</div>
+                </div>
+
+                 <div class="card">
+                    <h3>3. Halide Precipitates (හේලයිඩ අවක්ෂේප)</h3>
+                    <p>$AgNO_3$ දැම්මම එන පාට:</p>
+                    <ul>
+                        <li>$Cl^-$ : සුදු අවක්ෂේපය ($AgCl$) - තනුක ඇමෝනියා වල දියවෙනවා.</li>
+                        <li>$Br^-$ : ලා කහ අවක්ෂේපය ($AgBr$) - සාන්ද්‍ර ඇමෝනියා වල විතරයි දියවෙන්නේ.</li>
+                        <li>$I^-$ : තද කහ අවක්ෂේපය ($AgI$) - ඇමෝනියා වල දියවෙන්නෙම නෑ.</li>
+                    </ul>
                 </div>
             </div>
-        </section>
 
-    </main>
+            <div id="calc" class="section">
+                <h1>SMART CALCULATOR</h1>
+                <div class="card">
+                    <h3>Mole Calculator ($n = \frac{m}{M}$)</h3>
+                    <input type="number" id="mass" placeholder="Mass (g)" class="search-box" style="font-size:0.9rem; padding:10px;">
+                    <input type="number" id="mm" placeholder="Molar Mass (g/mol)" class="search-box" style="font-size:0.9rem; padding:10px;">
+                    <button onclick="calcMoles()" class="nav-btn active" style="text-align:center;">Calculate</button>
+                    <h2 id="moleRes" style="margin-top:10px; text-align:center;">0.00 mol</h2>
+                </div>
+            </div>
 
-    <footer>
-        <p>POWERED BY TECHKEY | PIXEL KNIGHT PRODUCTIONS &copy; 2026</p>
-    </footer>
+            <div id="papers" class="section">
+                <h1>PAST PAPER ARCHIVE</h1>
+                
+                <div class="card">
+                    <span class="tag">2019 A/L</span> <span class="tag">MCQ</span>
+                    <h3>Question 04</h3>
+                    <p>ප්‍රශ්නය: සාන්ද්‍රණය $0.1 \ mol \ dm^{-3}$ වූ $KMnO_4$ ද්‍රාවණ $25 \ cm^3$ ක් ආම්ලික මාධ්‍යයේදී පූර්ණ ලෙස ප්‍රතික්‍රියා කිරීමට අවශ්‍ය $Fe^{2+}$ මවුල ගණන කීයද?</p>
+                    
+                    <button onclick="this.nextElementSibling.style.display='block'" class="nav-btn" style="width:auto; margin-top:10px;">Show Answer</button>
+                    <div style="display:none; margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+                        <p><strong>විසඳුම:</strong></p>
+                        <p>1. ප්‍රතික්‍රියාව තුලිත කරමු: $$MnO_4^- + 5Fe^{2+} + 8H^+ \rightarrow Mn^{2+} + 5Fe^{3+} + 4H_2O$$</p>
+                        <p>2. අනුපාතය $1:5$ වේ.</p>
+                        <p>3. $KMnO_4$ මවුල = $CV = 0.1 \times 25 \times 10^{-3} = 2.5 \times 10^{-3} mol$</p>
+                        <p>4. අවශ්‍ය $Fe^{2+}$ = $2.5 \times 10^{-3} \times 5 = \mathbf{0.0125 \ mol}$</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <span class="tag">2020 A/L</span> <span class="tag">Structured</span>
+                    <h3>Gas Calculation</h3>
+                    <p>ප්‍රශ්නය: $27^\circ C$ දී $N_2$ වායුව $2 \ dm^3$ බඳුනක පීඩනය $1 \times 10^5 \ Pa$ වේ. මවුල ගණන සොයන්න ($R = 8.314$).</p>
+                     <button onclick="this.nextElementSibling.style.display='block'" class="nav-btn" style="width:auto; margin-top:10px;">Show Answer</button>
+                    <div style="display:none; margin-top:10px;">
+                        <p>$$PV = nRT$$</p>
+                        <p>$$n = \frac{PV}{RT}$$</p>
+                        <p>$$n = \frac{10^5 \times 2 \times 10^{-3}}{8.314 \times 300}$$</p>
+                        <p>$$n \approx \mathbf{0.08 \ mol}$$</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
 
     <script>
-        // --- MATRIX BACKGROUND LOGIC ---
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        // --- 1. INTRO ANIMATION LOGIC ---
+        const textToType = "Proudly made By Amod Gayanajana...";
+        const typeContainer = document.getElementById('type-text');
+        const preloader = document.getElementById('preloader');
+        const mainCon = document.getElementById('main-container');
+        let charIndex = 0;
 
-        function drawMatrix() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0F0";
-            ctx.font = fontSize + "px monospace";
-            for (let i = 0; i < drops.length; i++) {
-                const text = letters.charAt(Math.floor(Math.random() * letters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                typeContainer.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 100); // Typing speed
+            } else {
+                // Typing finished, wait a bit then fade out
+                setTimeout(() => {
+                    preloader.classList.add('fade-out');
+                    mainCon.style.opacity = '1';
+                    document.body.style.overflowX = 'auto'; // Re-enable scroll
+                    setTimeout(() => preloader.style.display = 'none', 1000);
+                }, 1000);
             }
         }
-        setInterval(drawMatrix, 40);
 
-        // --- NAVIGATION LOGIC ---
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        // Start animation on load
+        window.onload = typeWriter;
+
+        // --- 2. NAVIGATION LOGIC ---
+        function show(id) {
+            // Hide all
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show target
             document.getElementById(id).classList.add('active');
             
-            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-'+id).classList.add('active');
+            // Highlight button
+            event.currentTarget.classList.add('active');
         }
 
-        // --- REACTION DATA ---
+        // --- 3. REACTION DATA (THE MEGA DB) ---
         const reactions = [
-            {
-                id: 1, type: 'acid', title: 'KMnO₄ (Acidic)',
-                startColor: 'bg-purple', endColor: 'bg-colorless',
-                desc: 'Acidic Medium Reduction',
-                eq: 'MnO₄⁻ + 8H⁺ + 5e ➝ Mn²⁺ + 4H₂O',
-                trick: 'Mn: +7 to +2. Difference is 5 electrons.'
-            },
-            {
-                id: 2, type: 'acid', title: 'K₂Cr₂O₇ (Acidic)',
-                startColor: 'bg-orange', endColor: 'bg-green',
-                desc: 'Dichromate Reduction',
-                eq: 'Cr₂O₇²⁻ + 14H⁺ + 6e ➝ 2Cr³⁺ + 7H₂O',
-                trick: 'Orange to Green. 6 electrons total (3 per Cr).'
-            },
-            {
-                id: 3, type: 'base', title: 'KMnO₄ (Basic/Neutral)',
-                startColor: 'bg-purple', endColor: 'bg-brown-ppt',
-                desc: 'Basic Medium Reduction',
-                eq: 'MnO₄⁻ + 2H₂O + 3e ➝ MnO₂ (s) + 4OH⁻',
-                trick: 'Forms Brown Precipitate (MnO₂). 3 electrons.'
-            },
-            {
-                id: 4, type: 'acid', title: 'Iodometry (Starch)',
-                startColor: 'bg-blue-dark', endColor: 'bg-colorless',
-                desc: 'Iodine + Thiosulfate',
-                eq: 'I₂ + 2S₂O₃²⁻ ➝ 2I⁻ + S₄O₆²⁻',
-                trick: 'Dark Blue disappears at endpoint.'
-            },
-            {
-                id: 5, type: 'ppt', title: 'AgCl Precipitate',
-                startColor: 'bg-colorless', endColor: 'bg-white-ppt',
-                desc: 'Silver Nitrate + Chloride',
-                eq: 'Ag⁺(aq) + Cl⁻(aq) ➝ AgCl(s)',
-                trick: 'White precipitate. Soluble in dil. NH₃.'
-            },
-            {
-                id: 6, type: 'ppt', title: 'AgI Precipitate',
-                startColor: 'bg-colorless', endColor: 'bg-yellow-ppt',
-                desc: 'Silver Nitrate + Iodide',
-                eq: 'Ag⁺(aq) + I⁻(aq) ➝ AgI(s)',
-                trick: 'Yellow precipitate. Insoluble in NH₃.'
-            }
+            { name: "KMnO4 (Acidic)", eqn: "$$MnO_4^- + 8H^+ + 5e \\rightarrow Mn^{2+} + 4H_2O$$", note: "දම් පාට $\\rightarrow$ අවර්ණ" },
+            { name: "KMnO4 (Basic)", eqn: "$$MnO_4^- + 2H_2O + 3e \\rightarrow MnO_2 + 4OH^-$$", note: "දම් පාට $\\rightarrow$ දුඹුරු අවක්ෂේප" },
+            { name: "K2Cr2O7 (Acidic)", eqn: "$$Cr_2O_7^{2-} + 14H^+ + 6e \\rightarrow 2Cr^{3+} + 7H_2O$$", note: "තැඹිලි $\\rightarrow$ කොළ" },
+            { name: "Thiosulfate + Iodine", eqn: "$$I_2 + 2S_2O_3^{2-} \\rightarrow 2I^- + S_4O_6^{2-}$$", note: "Iodometry වල ප්‍රධාන එක. පිෂ්ඨය (Starch) දැම්මම තද නිල් පාට නැති වෙනවා." },
+            { name: "H2O2 Decomposition", eqn: "$$2H_2O_2 \\rightarrow 2H_2O + O_2$$", note: "මෙතනදි H2O2 Disproportionate (විෂමානුපාතනය) වෙනවා." },
+            { name: "Fe2+ Oxidation", eqn: "$$Fe^{2+} \\rightarrow Fe^{3+} + e$$", note: "ලා කොළ $\\rightarrow$ කහ/දුඹුරු" },
+            { name: "Oxalate Oxidation", eqn: "$$C_2O_4^{2-} \\rightarrow 2CO_2 + 2e$$", note: "KMnO4 එක්ක රත් කරන්න ඕනේ ($60^\\circ C$)." },
+            { name: "Sodium with Water", eqn: "$$2Na + 2H_2O \\rightarrow 2NaOH + H_2$$", note: "රන්වන් කහ දැල්ලක් එක්ක පත්තුවෙනවා." },
+            { name: "Magnesium with Steam", eqn: "$$Mg + H_2O_{(g)} \\rightarrow MgO + H_2$$", note: "Mg උණු වතුර එක්ක ප්‍රතික්‍රියා කරන්නේ නෑ. හුමාලය ඕනේ." },
+            { name: "Cu with Conc HNO3", eqn: "$$Cu + 4HNO_3 \\rightarrow Cu(NO_3)_2 + 2NO_2 + 2H_2O$$", note: "$NO_2$ දුඹුරු වායුවක් පිටවෙනවා. ද්‍රාවණය නිල් පාට වෙනවා." },
+            { name: "Ammonia Test (HCl)", eqn: "$$NH_3 + HCl \\rightarrow NH_4Cl$$", note: "සුදු දුමාරයක් (White Fumes) එනවා." },
+            { name: "H2S with SO2", eqn: "$$2H_2S + SO_2 \\rightarrow 3S + 2H_2O$$", note: "කහ පාට ගෙන්දගම් (Sulfur) තැන්පත් වෙනවා." },
+            { name: "Aluminum Amphoteric", eqn: "$$2Al + 2NaOH + 6H_2O \\rightarrow 2Na[Al(OH)_4] + 3H_2$$", note: "Al භෂ්ම එක්කත් ප්‍රතික්‍රියා කරලා හයිඩ්‍රජන් දෙනවා." }
         ];
 
-        // --- RENDER REACTIONS ---
-        function renderReactions(filter = 'all') {
+        function renderReactions(list) {
             const grid = document.getElementById('reaction-grid');
-            grid.innerHTML = '';
-
-            const filtered = filter === 'all' ? reactions : reactions.filter(r => r.type === filter);
-
-            filtered.forEach(r => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <h3>${r.title}</h3>
-                    <div class="beaker-box">
-                        <div class="liquid ${r.startColor}" id="liq-${r.id}"></div>
-                    </div>
-                    <div class="equation">${r.eq}</div>
-                    <div class="trick">💡 ${r.trick}</div>
-                    <button class="btn-action" onclick="simulate(${r.id}, '${r.startColor}', '${r.endColor}')">REACT</button>
-                `;
-                grid.appendChild(card);
+            grid.innerHTML = "";
+            list.forEach(r => {
+                let div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `<h3>${r.name}</h3><div style="font-size:1.1rem; margin:10px 0;">${r.eqn}</div><p style="color:#aaa">💡 ${r.note}</p>`;
+                grid.appendChild(div);
             });
-        }
-        
-        // Initial Render
-        renderReactions();
-
-        function filterReactions(type) {
-            renderReactions(type);
+            // Re-render MathJax
+            if(window.MathJax) MathJax.typeset();
         }
 
-        function simulate(id, start, end) {
-            const liq = document.getElementById(`liq-${id}`);
-            if(liq.classList.contains(start)) {
-                liq.classList.remove(start);
-                liq.classList.add(end);
-            } else {
-                liq.classList.remove(end);
-                liq.classList.add(start);
-            }
+        // Render all initially
+        renderReactions(reactions);
+
+        // Filter Logic
+        function filterReactions() {
+            let val = document.getElementById('searchInp').value.toLowerCase();
+            let filtered = reactions.filter(r => r.name.toLowerCase().includes(val) || r.note.toLowerCase().includes(val));
+            renderReactions(filtered);
         }
 
-        // --- CALCULATOR LOGIC ---
+        // --- 4. CALCULATOR LOGIC ---
         function calcMoles() {
-            const m = parseFloat(document.getElementById('mass-input').value);
-            const mm = parseFloat(document.getElementById('mm-input').value);
+            let m = parseFloat(document.getElementById('mass').value);
+            let mm = parseFloat(document.getElementById('mm').value);
             if(m && mm) {
-                const ans = m / mm;
-                document.getElementById('mole-result').innerText = ans.toFixed(4) + " mol";
-            }
-        }
-
-        function calcCV() {
-            const c = parseFloat(document.getElementById('conc-input').value);
-            const v = parseFloat(document.getElementById('vol-input').value);
-            if(c && v) {
-                const ans = c * (v / 1000);
-                document.getElementById('cv-result').innerText = ans.toFixed(4) + " mol";
+                document.getElementById('moleRes').innerText = (m/mm).toFixed(4) + " mol";
+            } else {
+                alert("අඩෝ අගයන් හරියට දාපන්!");
             }
         }
 
