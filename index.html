@@ -3,406 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMOD'S CHEM LAB | Ultimate Version</title>
+    <title>AMOD GAYANJANA | SYSTEM CORE</title>
     
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+Sinhala:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-    
-    <script>
-        window.MathJax = {
-            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-            svg: { fontCache: 'global' }
-        };
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <script>window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };</script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&family=Share+Tech+Mono&family=Noto+Sans+Sinhala:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #00f3ff;
-            --secondary: #bc13fe;
-            --dark-bg: #050505;
-            --panel: #111;
-            --text: #fff;
-            --glass: rgba(255, 255, 255, 0.05);
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-red: #ff003c;
+            --bg-dark: #020202;
+            --glass: rgba(10, 15, 20, 0.75);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--text);
-            font-family: 'Rajdhani', 'Noto Sans Sinhala', sans-serif;
-            overflow-x: hidden; /* Hide scrollbar during intro */
-        }
-
-        /* --- PRELOADER (INTRO ANIMATION) --- */
-        #preloader {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .typing-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: var(--primary);
-            border-right: 2px solid var(--primary);
-            white-space: nowrap;
-            overflow: hidden;
-            width: 0;
-            animation: typing 3s steps(30, end) forwards, blink 0.75s step-end infinite;
-        }
-
-        @keyframes typing { from { width: 0; } to { width: 100%; } }
-        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--primary); } }
-
-        .fade-out { opacity: 0; pointer-events: none; transition: opacity 1s ease; }
-
-        /* --- MAIN LAYOUT --- */
-        .container {
-            display: flex;
-            min-height: 100vh;
-            opacity: 0; /* Hidden initially */
-            transition: opacity 1s ease;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: rgba(10, 10, 10, 0.95);
-            border-right: 1px solid #333;
-            padding: 20px;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .content {
-            margin-left: 280px;
-            padding: 30px;
-            width: 100%;
-        }
-
-        /* --- STYLES --- */
-        h1, h2, h3 { font-family: 'Orbitron', sans-serif; color: var(--primary); }
-        
-        .nav-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background: transparent;
-            border: 1px solid #333;
-            color: #aaa;
-            text-align: left;
-            cursor: pointer;
-            font-family: 'Orbitron';
-            transition: 0.3s;
-            border-radius: 5px;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: var(--glass);
-            border-color: var(--primary);
-            color: var(--primary);
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
-        }
-
-        .section { display: none; animation: slideUp 0.5s ease; }
-        .section.active { display: block; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* CARDS */
-        .card {
-            background: var(--panel);
-            border: 1px solid #333;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            position: relative;
-        }
-        .card:hover { border-color: var(--secondary); }
-
-        .tag {
-            background: var(--secondary);
-            color: #000;
-            padding: 2px 8px;
-            font-size: 0.7rem;
-            border-radius: 3px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        /* SEARCH BAR */
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            background: #111;
-            border: 1px solid var(--primary);
+            background: var(--bg-dark);
             color: #fff;
-            font-family: 'Orbitron';
-            margin-bottom: 20px;
-            font-size: 1.1rem;
+            font-family: 'Rajdhani', 'Noto Sans Sinhala', sans-serif;
+            overflow: hidden;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; height: auto; position: relative; border-bottom: 1px solid #333; }
-            .content { margin-left: 0; }
-            .container { flex-direction: column; }
-            .typing-text { font-size: 1rem; }
+        /* --- CUSTOM CURSOR --- */
+        #cursor {
+            width: 20px; height: 20px; border: 2px solid var(--neon-blue); border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s; mix-blend-mode: difference;
+        }
+        #cursor.hovered { width: 60px; height: 60px; background: rgba(0, 243, 255, 0.1); border-color: var(--neon-purple); }
+        #cursor::after {
+            content: ''; position: absolute; top: 50%; left: 50%; width: 4px; height: 4px;
+            background: #fff; transform: translate(-50%, -50%); border-radius: 50%;
         }
 
-        /* CHAT BUBBLE STYLE FOR NOTES */
-        .chat-bubble {
-            background: rgba(0, 243, 255, 0.1);
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 0.95rem;
-            line-height: 1.6;
+        /* --- 3D BACKGROUND --- */
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        /* --- INTRO LOADER --- */
+        #intro-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 5000; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+        }
+        .intro-text {
+            font-family: 'Orbitron'; font-size: 2.5rem; color: var(--neon-blue);
+            text-shadow: 0 0 20px var(--neon-blue); letter-spacing: 5px;
+            opacity: 0; transform: scale(0.9);
+        }
+        .intro-sub {
+            font-family: 'Share Tech Mono'; color: var(--neon-purple); margin-top: 15px;
+            font-size: 1.2rem; opacity: 0;
+        }
+        .scan-bar {
+            width: 0%; height: 2px; background: #fff; margin-top: 30px;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        /* --- UI LAYOUT --- */
+        .hud-frame {
+            position: fixed; border: 1px solid rgba(0, 243, 255, 0.2);
+            pointer-events: none; z-index: 10;
+        }
+        .hud-top { top: 20px; left: 20px; right: 20px; height: 50px; border-bottom: none; }
+        .hud-btm { bottom: 20px; left: 20px; right: 20px; height: 50px; border-top: none; }
+
+        .app-container {
+            display: flex; height: 100vh; padding: 80px 40px; gap: 30px;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 80px; display: flex; flex-direction: column; justify-content: center; gap: 30px; z-index: 100;
+        }
+        .nav-btn {
+            width: 60px; height: 60px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: center; align-items: center; font-size: 1.5rem;
+            color: rgba(255,255,255,0.5); transition: 0.3s; clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+        }
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--neon-blue); border-color: var(--neon-blue); transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+
+        /* --- CONTENT AREA --- */
+        .main-display {
+            flex: 1; position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(5px); border-radius: 10px;
+        }
+        
+        .section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px; opacity: 0; pointer-events: none; transform: translateY(20px);
+            transition: 0.5s ease; overflow-y: auto;
+        }
+        .section.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-blue); }
+
+        /* --- TITLES --- */
+        h1.glitch-header {
+            font-family: 'Orbitron'; font-size: 3rem; color: #fff;
+            text-shadow: 2px 2px 0px var(--neon-red), -2px -2px 0px var(--neon-blue);
+            margin-bottom: 30px; border-bottom: 2px solid var(--neon-blue); display: inline-block;
+        }
+
+        /* --- ABOUT ME CARD (HOLOGRAPHIC) --- */
+        .profile-card {
+            display: flex; gap: 40px; align-items: center;
+            background: rgba(10, 10, 10, 0.8); border: 1px solid var(--neon-purple);
+            padding: 40px; border-radius: 15px; position: relative; overflow: hidden;
+        }
+        .profile-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(188, 19, 254, 0.2), transparent);
+            animation: holo-scan 4s infinite linear;
+        }
+        @keyframes holo-scan { 0% {left: -100%} 100% {left: 200%} }
+        
+        .p-pic {
+            width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--neon-blue);
+            background: url('https://cdn-icons-png.flaticon.com/512/4140/4140048.png'); /* Generic Hacker Icon */
+            background-size: cover; box-shadow: 0 0 30px var(--neon-blue);
+        }
+        .p-details h2 { font-family: 'Orbitron'; font-size: 2.5rem; color: #fff; margin-bottom: 5px; }
+        .p-details h4 { font-family: 'Share Tech Mono'; color: var(--neon-purple); font-size: 1.2rem; letter-spacing: 2px; }
+        .p-bio { margin-top: 20px; line-height: 1.6; color: #ccc; font-size: 1.1rem; max-width: 600px; }
+        .p-badges { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge {
+            padding: 5px 15px; background: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-blue);
+            color: var(--neon-blue); font-family: 'Share Tech Mono'; font-size: 0.9rem;
+        }
+
+        /* --- CHEM DATABASE GRID --- */
+        .search-bar {
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-blue);
+            color: #fff; font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 30px;
+        }
+        .chem-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
+        }
+        .chem-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px; transition: 0.3s; position: relative;
+        }
+        .chem-card:hover {
+            border-color: var(--neon-blue); background: rgba(0, 243, 255, 0.05);
+            transform: translateY(-5px);
+        }
+        .chem-title { color: var(--neon-blue); font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 10px; }
+        .chem-body { font-size: 1rem; color: #ddd; line-height: 1.5; font-family: 'Noto Sans Sinhala'; }
+        .chem-tag {
+            position: absolute; top: 10px; right: 10px; font-size: 0.7rem; 
+            padding: 2px 5px; background: var(--neon-purple); color: #000; font-weight: bold;
         }
 
     </style>
 </head>
 <body>
 
-    <div id="preloader">
-        <div class="typing-text" id="type-text"></div>
+    <div id="cursor"></div>
+
+    <div id="canvas-container"></div>
+
+    <div id="intro-layer">
+        <h1 class="intro-text" id="intro-main"></h1>
+        <div class="scan-bar" id="intro-bar"></div>
+        <p class="intro-sub">SYSTEM INITIALIZATION...</p>
     </div>
 
-    <div class="container" id="main-container">
+    <div class="hud-frame hud-top"></div>
+    <div class="hud-frame hud-btm"></div>
+
+    <div class="app-container">
         
         <nav class="sidebar">
-            <h2 style="margin-bottom: 30px; text-align: center;">CHEM <span style="color:#fff">HUB</span></h2>
-            <button class="nav-btn active" onclick="show('dashboard')"><i class="fas fa-home"></i> Home</button>
-            <button class="nav-btn" onclick="show('reactions')"><i class="fas fa-flask"></i> All Reactions (DB)</button>
-            <button class="nav-btn" onclick="show('theory')"><i class="fas fa-book"></i> Theory (සිංහල)</button>
-            <button class="nav-btn" onclick="show('calc')"><i class="fas fa-calculator"></i> Calculator</button>
-            <button class="nav-btn" onclick="show('papers')"><i class="fas fa-file-alt"></i> Past Papers</button>
-            
-            <div style="margin-top: 50px; font-size: 0.8rem; color: #555; text-align: center;">
-                Admin: Pixel Knight (Amod)<br>
-                v2.0 Ultimate
-            </div>
+            <div class="nav-btn active" onclick="nav('about')"><i class="fas fa-user-astronaut"></i></div>
+            <div class="nav-btn" onclick="nav('chem')"><i class="fas fa-atom"></i></div>
+            <div class="nav-btn" onclick="nav('calc')"><i class="fas fa-calculator"></i></div>
         </nav>
 
-        <main class="content">
+        <div class="main-display">
+            
+            <div id="about" class="section active">
+                <h1 class="glitch-header">IDENTITY CONFIRMED</h1>
+                
+                <div class="profile-card">
+                    <div class="p-pic"></div>
+                    <div class="p-details">
+                        <h2>AMOD GAYANJANA</h2>
+                        <h4>PIXEL KNIGHT | A/L SCHOLAR</h4>
+                        
+                        <div class="p-bio">
+                            <p>
+                                I am a multidisciplinary technologist and an Advanced Level student specializing in the Physical Science stream. 
+                                My expertise spans across <strong>Full-Stack Development</strong>, <strong>Ethical Cybersecurity</strong>, and <strong>Application Quality Assurance</strong>.
+                            </p>
+                            <br>
+                            <p>
+                                Currently serving as the <strong>Founder & Administrator</strong> of <span style="color:var(--neon-blue)">TechKey</span>, 
+                                Sri Lanka's No. 01 premier technology community. I blend academic rigor with real-world technical innovation to build next-generation digital solutions.
+                            </p>
+                        </div>
 
-            <div id="dashboard" class="section active">
-                <h1>Welcome, Amod.</h1>
-                <p style="color:#aaa;">ලංකාවේ අංක එකේ Chemistry Database එක.</p>
-                <br>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div class="card" style="border-top: 3px solid var(--primary);">
-                        <h3>Total Reactions</h3>
-                        <h1 style="color:#fff">25+</h1>
-                        <p>Inorganic & Organic covered.</p>
+                        <div class="p-badges">
+                            <div class="badge">ETHICAL HACKER</div>
+                            <div class="badge">PROGRAMMER</div>
+                            <div class="badge">APP TESTER</div>
+                            <div class="badge">TECHKEY ADMIN</div>
+                        </div>
                     </div>
-                    <div class="card" style="border-top: 3px solid var(--secondary);">
-                        <h3>Exam Target</h3>
-                        <h1 style="color:#fff">2027</h1>
-                        <p>Maths / Bio Stream</p>
-                    </div>
-                </div>
-
-                <div class="chat-bubble" style="margin-top: 30px;">
-                    <strong>📢 Admin Note:</strong><br>
-                    මචං මේකේ මම දන්න හැම රෙද්දම දැම්මා. S-block, D-block, Anions, Cations ඔක්කොම තියෙනවා. Search Bar එකෙන් නම ගහලා හොයාගනින්. අර පරණ $ ලකුණු ප්‍රශ්නෙත් හරි. දැන් ගණන් හදන්න ලේසියි.
                 </div>
             </div>
 
-            <div id="reactions" class="section">
-                <h1>CHEMICAL DATABASE</h1>
-                <input type="text" class="search-box" id="searchInp" onkeyup="filterReactions()" placeholder="Search (e.g., KMnO4, Li, Nitrate)...">
+            <div id="chem" class="section">
+                <h1 class="glitch-header">CHEM DATA CORE</h1>
+                <input type="text" class="search-bar" id="searchInp" placeholder="Search Database (e.g. KMnO4, Gas, Flame)..." onkeyup="filterChem()">
                 
-                <div id="reaction-grid">
+                <div class="chem-grid" id="chem-container">
                     </div>
-            </div>
-
-            <div id="theory" class="section">
-                <h1>KUPPI NOTES (සිංහල)</h1>
-                
-                <div class="card">
-                    <h3>1. Flame Tests (දැල්ලේ වර්ණ)</h3>
-                    <p>S- ගොනුවේ කට්ටිය රත් කරාම එන පාට මතක තියාගනින්.</p>
-                    <ul>
-                        <li>$Li$ - ක්‍රිම්සන් රතු (Crimson Red)</li>
-                        <li>$Na$ - රන්වන් කහ (Golden Yellow)</li>
-                        <li>$K$ - ලිලැක් (Lilac)</li>
-                        <li>$Ca$ - ගඩොල් රතු (Brick Red)</li>
-                        <li>$Sr$ - ක්‍රිම්සන් (Crimson)</li>
-                        <li>$Ba$ - ඇපල් කොළ (Apple Green)</li>
-                    </ul>
-                    <div class="chat-bubble">
-                        Tip: $Mg$ සහ $Be$ පාටක් දෙන්නේ නෑ බන්. ඒක මතක තියාගනින්.
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h3>2. Nitrate Decomposition (නයිට්‍රේට වියෝජනය)</h3>
-                    <p>මේක Exam එකට අනිවා එනවා.</p>
-                    <p>$\textbf{Li, Ca, Sr, Ba}$ වගේ අය කැඩුනම හැදෙන්නේ Oxide එක.</p>
-                    <p>$$2M(NO_3)_2 \rightarrow 2MO + 4NO_2 + O_2$$</p>
-                    <p>$\textbf{Na, K}$ (සෝඩියම්, පොටෑසියම්) කැඩුනම හැදෙන්නේ නයිට්‍රයිට් ($NO_2^-$).</p>
-                    <p>$$2KNO_3 \rightarrow 2KNO_2 + O_2$$</p>
-                    <div class="chat-bubble">
-                        වැදගත්: $NO_2$ වායුව දුඹුරු පාටයි. $O_2$ පාටක් නෑ.
-                    </div>
-                </div>
-
-                 <div class="card">
-                    <h3>3. Halide Precipitates (හේලයිඩ අවක්ෂේප)</h3>
-                    <p>$AgNO_3$ දැම්මම එන පාට:</p>
-                    <ul>
-                        <li>$Cl^-$ : සුදු අවක්ෂේපය ($AgCl$) - තනුක ඇමෝනියා වල දියවෙනවා.</li>
-                        <li>$Br^-$ : ලා කහ අවක්ෂේපය ($AgBr$) - සාන්ද්‍ර ඇමෝනියා වල විතරයි දියවෙන්නේ.</li>
-                        <li>$I^-$ : තද කහ අවක්ෂේපය ($AgI$) - ඇමෝනියා වල දියවෙන්නෙම නෑ.</li>
-                    </ul>
-                </div>
             </div>
 
             <div id="calc" class="section">
-                <h1>SMART CALCULATOR</h1>
-                <div class="card">
-                    <h3>Mole Calculator ($n = \frac{m}{M}$)</h3>
-                    <input type="number" id="mass" placeholder="Mass (g)" class="search-box" style="font-size:0.9rem; padding:10px;">
-                    <input type="number" id="mm" placeholder="Molar Mass (g/mol)" class="search-box" style="font-size:0.9rem; padding:10px;">
-                    <button onclick="calcMoles()" class="nav-btn active" style="text-align:center;">Calculate</button>
-                    <h2 id="moleRes" style="margin-top:10px; text-align:center;">0.00 mol</h2>
+                <h1 class="glitch-header">QUANTUM CALC</h1>
+                <div class="profile-card" style="flex-direction: column; align-items: flex-start;">
+                    <h3 style="color:var(--neon-blue)">Mole Calculator ($n=m/M$)</h3>
+                    <div style="display:flex; gap:10px; width:100%;">
+                        <input type="number" id="mass" placeholder="Mass (g)" class="search-bar" style="margin:0;">
+                        <input type="number" id="molar" placeholder="Molar Mass (g/mol)" class="search-bar" style="margin:0;">
+                    </div>
+                    <button onclick="calcMole()" style="padding:15px; width:100%; background:var(--neon-purple); border:none; color:#fff; font-family:'Orbitron'; font-size:1.2rem; cursor:pointer;">COMPUTE</button>
+                    <div id="res" style="margin-top:20px; font-size:2rem; color:var(--neon-blue);">0.00 mol</div>
                 </div>
             </div>
 
-            <div id="papers" class="section">
-                <h1>PAST PAPER ARCHIVE</h1>
-                
-                <div class="card">
-                    <span class="tag">2019 A/L</span> <span class="tag">MCQ</span>
-                    <h3>Question 04</h3>
-                    <p>ප්‍රශ්නය: සාන්ද්‍රණය $0.1 \ mol \ dm^{-3}$ වූ $KMnO_4$ ද්‍රාවණ $25 \ cm^3$ ක් ආම්ලික මාධ්‍යයේදී පූර්ණ ලෙස ප්‍රතික්‍රියා කිරීමට අවශ්‍ය $Fe^{2+}$ මවුල ගණන කීයද?</p>
-                    
-                    <button onclick="this.nextElementSibling.style.display='block'" class="nav-btn" style="width:auto; margin-top:10px;">Show Answer</button>
-                    <div style="display:none; margin-top:10px; border-top:1px solid #333; padding-top:10px;">
-                        <p><strong>විසඳුම:</strong></p>
-                        <p>1. ප්‍රතික්‍රියාව තුලිත කරමු: $$MnO_4^- + 5Fe^{2+} + 8H^+ \rightarrow Mn^{2+} + 5Fe^{3+} + 4H_2O$$</p>
-                        <p>2. අනුපාතය $1:5$ වේ.</p>
-                        <p>3. $KMnO_4$ මවුල = $CV = 0.1 \times 25 \times 10^{-3} = 2.5 \times 10^{-3} mol$</p>
-                        <p>4. අවශ්‍ය $Fe^{2+}$ = $2.5 \times 10^{-3} \times 5 = \mathbf{0.0125 \ mol}$</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <span class="tag">2020 A/L</span> <span class="tag">Structured</span>
-                    <h3>Gas Calculation</h3>
-                    <p>ප්‍රශ්නය: $27^\circ C$ දී $N_2$ වායුව $2 \ dm^3$ බඳුනක පීඩනය $1 \times 10^5 \ Pa$ වේ. මවුල ගණන සොයන්න ($R = 8.314$).</p>
-                     <button onclick="this.nextElementSibling.style.display='block'" class="nav-btn" style="width:auto; margin-top:10px;">Show Answer</button>
-                    <div style="display:none; margin-top:10px;">
-                        <p>$$PV = nRT$$</p>
-                        <p>$$n = \frac{PV}{RT}$$</p>
-                        <p>$$n = \frac{10^5 \times 2 \times 10^{-3}}{8.314 \times 300}$$</p>
-                        <p>$$n \approx \mathbf{0.08 \ mol}$$</p>
-                    </div>
-                </div>
-
-            </div>
-
-        </main>
+        </div>
     </div>
 
     <script>
-        // --- 1. INTRO ANIMATION LOGIC ---
-        const textToType = "Proudly made By Amod Gayanajana...";
-        const typeContainer = document.getElementById('type-text');
-        const preloader = document.getElementById('preloader');
-        const mainCon = document.getElementById('main-container');
-        let charIndex = 0;
+        // --- 1. INTRO ANIMATION (CINEMATIC) ---
+        const introText = "Proudly Made By Amod Gayanajana";
+        const introEl = document.getElementById('intro-main');
+        const introBar = document.getElementById('intro-bar');
+        const introLayer = document.getElementById('intro-layer');
 
+        let i = 0;
         function typeWriter() {
-            if (charIndex < textToType.length) {
-                typeContainer.textContent += textToType.charAt(charIndex);
-                charIndex++;
-                setTimeout(typeWriter, 100); // Typing speed
+            if (i < introText.length) {
+                introEl.innerHTML += introText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50); // Typing speed
             } else {
-                // Typing finished, wait a bit then fade out
-                setTimeout(() => {
-                    preloader.classList.add('fade-out');
-                    mainCon.style.opacity = '1';
-                    document.body.style.overflowX = 'auto'; // Re-enable scroll
-                    setTimeout(() => preloader.style.display = 'none', 1000);
-                }, 1000);
+                // Animation after typing
+                gsap.to(introEl, { scale: 1.1, duration: 2, color: "#fff" });
+                gsap.to(introBar, { width: "100%", duration: 1.5, ease: "power2.inOut" });
+                
+                // Fade out
+                gsap.to(introLayer, { 
+                    opacity: 0, 
+                    delay: 2.5, 
+                    duration: 1, 
+                    onComplete: () => { introLayer.style.display = 'none'; } 
+                });
+                
+                // Slide in UI
+                gsap.from(".sidebar", { x: -100, delay: 3, duration: 1 });
+                gsap.from(".main-display", { opacity: 0, scale: 0.9, delay: 3.2, duration: 1 });
             }
         }
-
-        // Start animation on load
         window.onload = typeWriter;
 
-        // --- 2. NAVIGATION LOGIC ---
-        function show(id) {
-            // Hide all
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        // --- 2. THREE.JS BACKGROUND ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Particles
+        const geometry = new THREE.BufferGeometry();
+        const count = 1000;
+        const posArray = new Float32Array(count * 3);
+        for(let i=0; i<count*3; i++) posArray[i] = (Math.random() - 0.5) * 20;
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const material = new THREE.PointsMaterial({ size: 0.02, color: 0x00f3ff, transparent: true, opacity: 0.8 });
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        camera.position.z = 5;
+
+        // Mouse Move
+        let mouseX = 0, mouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX / window.innerWidth - 0.5;
+            mouseY = e.clientY / window.innerHeight - 0.5;
+            // Custom Cursor
+            const cursor = document.getElementById('cursor');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Hover Effect
+        document.querySelectorAll('button, input, .nav-btn').forEach(el => {
+            el.addEventListener('mouseenter', () => document.getElementById('cursor').classList.add('hovered'));
+            el.addEventListener('mouseleave', () => document.getElementById('cursor').classList.remove('hovered'));
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.002;
+            particles.rotation.x += mouseY * 0.05;
+            particles.rotation.y += mouseX * 0.05;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // --- 3. CHEMISTRY DATABASE (THE "NOOK & CRANNY") ---
+        const chemData = [
+            { cat: "Basic", t: "මවුල (Mole Concept)", d: "$$n = m/M$$ (ස්කන්ධය මගින්)<br>$$n = CV$$ (සාන්ද්‍රණය මගින්)<br>$$n = V/22.4$$ (STP හිදී වායු)" },
+            { cat: "Gas", t: "වායු නියම (Gas Laws)", d: "පරිපූර්ණ වායු සමීකරණය: $$PV = nRT$$<br>R = 8.314 J mol⁻¹ K⁻¹<br>බොයිල් නියමය: P ∝ 1/V<br>චාල්ස් නියමය: V ∝ T" },
+            { cat: "Redox", t: "KMnO4 (ආම්ලික)", d: "වර්ණය: දම් $\\rightarrow$ අවර්ණ<br>$$MnO_4^- + 8H^+ + 5e \\rightarrow Mn^{2+} + 4H_2O$$<br>ඔක්සිකාරක අංකය: +7 $\\rightarrow$ +2" },
+            { cat: "Redox", t: "KMnO4 (භාෂ්මික/උදාසීන)", d: "වර්ණය: දම් $\\rightarrow$ දුඹුරු අවක්ෂේප ($MnO_2$)<br>$$MnO_4^- + 2H_2O + 3e \\rightarrow MnO_2 + 4OH^-$$" },
+            { cat: "Redox", t: "K2Cr2O7 (ආම්ලික)", d: "වර්ණය: තැඹිලි $\\rightarrow$ කොළ<br>$$Cr_2O_7^{2-} + 14H^+ + 6e \\rightarrow 2Cr^{3+} + 7H_2O$$" },
+            { cat: "Redox", t: "Iodometry (තයෝසල්ෆේට්)", d: "$$2S_2O_3^{2-} + I_2 \\rightarrow S_4O_6^{2-} + 2I^-$$<br>දර්ශකය: පිෂ්ඨය (Starch)<br>අන්ත ලක්ෂය: තද නිල් $\\rightarrow$ අවර්ණ" },
+            { cat: "Test", t: "Nitrate Test (දුඹුරු වලලු)", d: "$$[Fe(H_2O)_5NO]^{2+}$$<br>FeSO4 සහ සාන්ද්‍ර H2SO4 භාවිතා කරයි." },
+            { cat: "Flame", t: "දැල්ලේ වර්ණ (Flame Test)", d: "Li: ක්‍රිම්සන් රතු (Crimson)<br>Na: රන්වන් කහ (Golden Yellow)<br>K: ලිලැක් (Lilac)<br>Ca: ගඩොල් රතු (Brick Red)<br>Ba: ඇපල් කොළ (Apple Green)<br>Cu: නිල් කොළ (Blue Green)" },
+            { cat: "Ppt", t: "Halide Precipitates", d: "AgCl: සුදු (දියවේ - dil NH3)<br>AgBr: ලා කහ (දියවේ - conc NH3)<br>AgI: තද කහ (දිය නොවේ)" },
+            { cat: "Organic", t: "Aldehyde Tests", d: "Tollens: රිදී කැඩපතක් (Ag)<br>Fehling: ගඩොල් රතු අවක්ෂේප ($Cu_2O$)<br>Brady (2,4-DNP): තැඹිලි අවක්ෂේප" },
+            { cat: "Organic", t: "Lucas Test (Alcohols)", d: "Reagent: ZnCl2 + conc HCl<br>Tertiary: ක්ෂණිකව කැළඹේ<br>Secondary: වි. 5කින් කැළඹේ<br>Primary: රත් කළ විට පමණි" },
+            { cat: "Calc", t: "සාන්ද්‍රණය තනුක කිරීම", d: "$$C_1V_1 = C_2V_2$$<br>ජලය එකතු කරන විට මවුල ගණන නියතව පවතී." },
+            { cat: "Inorganic", t: "S Block - දියවීමේ ශක්තිය", d: " කාණ්ඩයේ පහළට යන විට හයිඩ්‍රේෂන් එන්තැල්පිය අඩු වේ. ද්‍රාව්‍යතාව වෙනස් වේ." },
+            { cat: "Calc", t: "ඵලදාව (Yield)", d: "$$\\text{Percentage Yield} = \\frac{\\text{Actual Yield}}{\\text{Theoretical Yield}} \\times 100$$" }
+        ];
+
+        // Load Data
+        const chemContainer = document.getElementById('chem-container');
+        function loadChem(data) {
+            chemContainer.innerHTML = "";
+            data.forEach(item => {
+                chemContainer.innerHTML += `
+                    <div class="chem-card">
+                        <span class="chem-tag">${item.cat}</span>
+                        <div class="chem-title">${item.t}</div>
+                        <div class="chem-body">${item.d}</div>
+                    </div>
+                `;
+            });
+            MathJax.typeset();
+        }
+        loadChem(chemData);
+
+        // Search Function
+        function filterChem() {
+            const query = document.getElementById('searchInp').value.toLowerCase();
+            const filtered = chemData.filter(item => 
+                item.t.toLowerCase().includes(query) || 
+                item.d.toLowerCase().includes(query)
+            );
+            loadChem(filtered);
+        }
+
+        // --- 4. NAVIGATION LOGIC ---
+        function nav(id) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             
-            // Show target
             document.getElementById(id).classList.add('active');
-            
-            // Highlight button
+            // Add active class to corresponding button
+            // (Simple logic for demo)
             event.currentTarget.classList.add('active');
         }
 
-        // --- 3. REACTION DATA (THE MEGA DB) ---
-        const reactions = [
-            { name: "KMnO4 (Acidic)", eqn: "$$MnO_4^- + 8H^+ + 5e \\rightarrow Mn^{2+} + 4H_2O$$", note: "දම් පාට $\\rightarrow$ අවර්ණ" },
-            { name: "KMnO4 (Basic)", eqn: "$$MnO_4^- + 2H_2O + 3e \\rightarrow MnO_2 + 4OH^-$$", note: "දම් පාට $\\rightarrow$ දුඹුරු අවක්ෂේප" },
-            { name: "K2Cr2O7 (Acidic)", eqn: "$$Cr_2O_7^{2-} + 14H^+ + 6e \\rightarrow 2Cr^{3+} + 7H_2O$$", note: "තැඹිලි $\\rightarrow$ කොළ" },
-            { name: "Thiosulfate + Iodine", eqn: "$$I_2 + 2S_2O_3^{2-} \\rightarrow 2I^- + S_4O_6^{2-}$$", note: "Iodometry වල ප්‍රධාන එක. පිෂ්ඨය (Starch) දැම්මම තද නිල් පාට නැති වෙනවා." },
-            { name: "H2O2 Decomposition", eqn: "$$2H_2O_2 \\rightarrow 2H_2O + O_2$$", note: "මෙතනදි H2O2 Disproportionate (විෂමානුපාතනය) වෙනවා." },
-            { name: "Fe2+ Oxidation", eqn: "$$Fe^{2+} \\rightarrow Fe^{3+} + e$$", note: "ලා කොළ $\\rightarrow$ කහ/දුඹුරු" },
-            { name: "Oxalate Oxidation", eqn: "$$C_2O_4^{2-} \\rightarrow 2CO_2 + 2e$$", note: "KMnO4 එක්ක රත් කරන්න ඕනේ ($60^\\circ C$)." },
-            { name: "Sodium with Water", eqn: "$$2Na + 2H_2O \\rightarrow 2NaOH + H_2$$", note: "රන්වන් කහ දැල්ලක් එක්ක පත්තුවෙනවා." },
-            { name: "Magnesium with Steam", eqn: "$$Mg + H_2O_{(g)} \\rightarrow MgO + H_2$$", note: "Mg උණු වතුර එක්ක ප්‍රතික්‍රියා කරන්නේ නෑ. හුමාලය ඕනේ." },
-            { name: "Cu with Conc HNO3", eqn: "$$Cu + 4HNO_3 \\rightarrow Cu(NO_3)_2 + 2NO_2 + 2H_2O$$", note: "$NO_2$ දුඹුරු වායුවක් පිටවෙනවා. ද්‍රාවණය නිල් පාට වෙනවා." },
-            { name: "Ammonia Test (HCl)", eqn: "$$NH_3 + HCl \\rightarrow NH_4Cl$$", note: "සුදු දුමාරයක් (White Fumes) එනවා." },
-            { name: "H2S with SO2", eqn: "$$2H_2S + SO_2 \\rightarrow 3S + 2H_2O$$", note: "කහ පාට ගෙන්දගම් (Sulfur) තැන්පත් වෙනවා." },
-            { name: "Aluminum Amphoteric", eqn: "$$2Al + 2NaOH + 6H_2O \\rightarrow 2Na[Al(OH)_4] + 3H_2$$", note: "Al භෂ්ම එක්කත් ප්‍රතික්‍රියා කරලා හයිඩ්‍රජන් දෙනවා." }
-        ];
-
-        function renderReactions(list) {
-            const grid = document.getElementById('reaction-grid');
-            grid.innerHTML = "";
-            list.forEach(r => {
-                let div = document.createElement('div');
-                div.className = 'card';
-                div.innerHTML = `<h3>${r.name}</h3><div style="font-size:1.1rem; margin:10px 0;">${r.eqn}</div><p style="color:#aaa">💡 ${r.note}</p>`;
-                grid.appendChild(div);
-            });
-            // Re-render MathJax
-            if(window.MathJax) MathJax.typeset();
-        }
-
-        // Render all initially
-        renderReactions(reactions);
-
-        // Filter Logic
-        function filterReactions() {
-            let val = document.getElementById('searchInp').value.toLowerCase();
-            let filtered = reactions.filter(r => r.name.toLowerCase().includes(val) || r.note.toLowerCase().includes(val));
-            renderReactions(filtered);
-        }
-
-        // --- 4. CALCULATOR LOGIC ---
-        function calcMoles() {
-            let m = parseFloat(document.getElementById('mass').value);
-            let mm = parseFloat(document.getElementById('mm').value);
+        // --- 5. CALCULATOR ---
+        function calcMole() {
+            const m = parseFloat(document.getElementById('mass').value);
+            const mm = parseFloat(document.getElementById('molar').value);
             if(m && mm) {
-                document.getElementById('moleRes').innerText = (m/mm).toFixed(4) + " mol";
-            } else {
-                alert("අඩෝ අගයන් හරියට දාපන්!");
+                document.getElementById('res').innerText = (m/mm).toFixed(4) + " mol";
             }
         }
 
