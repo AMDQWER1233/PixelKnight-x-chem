@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AMOD GAYANJANA | CHEM OS ULTIMATE</title>
+    <title>AMOD GAYANJANA | CHEM OS X</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -11,308 +11,392 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Noto+Sans+Sinhala:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
-        /* --- 1. CORE VARIABLES & RESET --- */
+        /* -----------------------------------------------------------
+           1. CORE VISUALS & RESET
+        ----------------------------------------------------------- */
         :root {
-            --primary: #00f0ff;
-            --secondary: #bd00ff;
-            --accent: #ff004c;
-            --bg-dark: #050508;
-            --glass-panel: rgba(16, 18, 27, 0.7);
-            --border-glow: 1px solid rgba(255, 255, 255, 0.08);
-            --text-main: #e0e0e0;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #bc13fe;
+            --neon-red: #ff003c;
+            --neon-green: #0aff0a;
+            --bg-deep: #020205;
+            --panel-bg: rgba(10, 15, 25, 0.85);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
+            --glass: blur(12px);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background-color: var(--bg-deep);
+            color: #e0e0e0;
             font-family: 'Rajdhani', 'Noto Sans Sinhala', sans-serif;
-            overflow: hidden; /* App feel */
+            overflow: hidden;
+            height: 100vh;
         }
 
-        /* --- 2. CINEMATIC INTRO --- */
-        #intro-overlay {
+        /* -----------------------------------------------------------
+           2. BOOT SEQUENCE (INTRO)
+        ----------------------------------------------------------- */
+        #boot-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 10000; display: flex; flex-direction: column;
+            background: #000; z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
         }
-        .intro-text-box { position: relative; overflow: hidden; }
-        .intro-title {
-            font-family: 'Orbitron'; font-size: 2.5rem; color: #fff;
-            text-transform: uppercase; letter-spacing: 2px;
-            text-shadow: 0 0 20px var(--primary);
-            transform: translateY(100%); opacity: 0;
-        }
-        .intro-sub {
-            font-family: 'Share Tech Mono'; color: var(--secondary); margin-top: 15px;
-            font-size: 1rem; opacity: 0;
-        }
-        .loader-line {
-            width: 0%; height: 3px; background: var(--primary); margin-top: 40px;
-            box-shadow: 0 0 15px var(--primary);
+        
+        .boot-terminal {
+            width: 90%; max-width: 600px; font-family: 'Share Tech Mono'; color: var(--neon-green);
+            font-size: 0.9rem; margin-bottom: 20px; height: 150px; overflow: hidden;
+            border: 1px solid #333; padding: 10px; background: rgba(0,20,0,0.1);
         }
 
-        /* --- 3. BACKGROUND ANIMATION --- */
+        .mega-title {
+            font-family: 'Orbitron'; font-size: 3rem; color: #fff; text-transform: uppercase;
+            text-shadow: 0 0 20px var(--neon-cyan); text-align: center; line-height: 1.2;
+            opacity: 0; transform: scale(0.8);
+        }
+
+        .made-by {
+            font-family: 'Orbitron'; font-size: 1.2rem; color: var(--neon-purple); margin-top: 10px;
+            letter-spacing: 3px; opacity: 0;
+        }
+
+        .progress-container {
+            width: 300px; height: 4px; background: #222; margin-top: 30px; position: relative;
+        }
+        .progress-bar {
+            width: 0%; height: 100%; background: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan);
+        }
+
+        /* -----------------------------------------------------------
+           3. MAIN UI LAYOUT
+        ----------------------------------------------------------- */
         #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
 
-        /* --- 4. NAVIGATION (THE COOL MENU) --- */
-        .sidebar {
-            position: fixed; left: 0; top: 0; height: 100%; width: 80px;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
-            border-right: var(--border-glow); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 40px; z-index: 500;
-            transition: 0.3s;
+        .app-container {
+            display: flex; height: 100vh; width: 100%; opacity: 0; /* Hidden initially */
         }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: var(--glass);
+            border-right: var(--border); display: flex; flex-direction: column;
+            padding: 20px; z-index: 100; transition: transform 0.3s ease;
+        }
+
+        .user-profile-mini {
+            display: flex; align-items: center; gap: 15px; padding-bottom: 20px;
+            border-bottom: var(--border); margin-bottom: 20px;
+        }
+        .user-avatar {
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--neon-cyan);
+            background: url('https://cdn-icons-png.flaticon.com/512/2593/2593491.png'); background-size: cover;
+        }
+        .user-info h3 { font-family: 'Orbitron'; font-size: 1rem; color: #fff; }
+        .user-info span { font-family: 'Share Tech Mono'; font-size: 0.7rem; color: var(--neon-purple); }
+
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; overflow-y: auto; }
         .nav-item {
-            position: relative; width: 50px; height: 50px; border-radius: 12px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.4rem; color: #666; cursor: pointer; transition: 0.3s;
-            background: rgba(255,255,255,0.02);
+            padding: 15px; border-radius: 8px; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; gap: 15px; font-family: 'Orbitron'; font-size: 0.9rem;
+            color: #888; border: 1px solid transparent;
         }
         .nav-item:hover, .nav-item.active {
-            color: var(--primary); background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); transform: scale(1.1);
+            background: rgba(0, 243, 255, 0.1); color: var(--neon-cyan); border-color: rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1); transform: translateX(5px);
         }
-        .nav-tooltip {
-            position: absolute; left: 70px; background: var(--primary); color: #000;
-            padding: 5px 10px; font-family: 'Orbitron'; font-size: 0.8rem; font-weight: bold;
-            border-radius: 4px; opacity: 0; pointer-events: none; transition: 0.2s;
-            white-space: nowrap;
-        }
-        .nav-item:hover .nav-tooltip { opacity: 1; left: 65px; }
 
-        /* --- 5. MAIN CONTENT LAYOUT --- */
-        .main-container {
-            margin-left: 80px; height: 100vh; position: relative; overflow: hidden;
+        .sys-status {
+            margin-top: auto; padding-top: 20px; border-top: var(--border);
+            font-family: 'Share Tech Mono'; font-size: 0.7rem; color: #555; text-align: center;
         }
-        .scroll-wrapper {
-            height: 100%; overflow-y: auto; padding: 40px; scroll-behavior: smooth;
+
+        /* CONTENT AREA */
+        .main-content {
+            flex: 1; position: relative; overflow: hidden;
         }
         
-        /* Custom Scrollbar */
-        .scroll-wrapper::-webkit-scrollbar { width: 6px; }
-        .scroll-wrapper::-webkit-scrollbar-thumb { background: var(--secondary); border-radius: 3px; }
+        .section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 40px; overflow-y: auto; overflow-x: hidden;
+            opacity: 0; pointer-events: none; transform: translateY(20px); transition: 0.5s ease;
+        }
+        .section.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 
-        /* --- 6. SECTIONS --- */
-        .section { display: none; animation: fadeIn 0.6s ease; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 3px; }
 
-        /* --- 7. CARDS & STYLING --- */
-        .hero-header {
-            font-family: 'Orbitron'; font-size: 3.5rem; line-height: 1;
-            background: linear-gradient(to right, #fff, var(--primary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+        /* -----------------------------------------------------------
+           4. COMPONENT STYLES
+        ----------------------------------------------------------- */
+        .header-box { margin-bottom: 40px; border-bottom: 2px solid var(--neon-cyan); display: inline-block; padding-bottom: 10px; }
+        .glitch-text { font-family: 'Orbitron'; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px var(--neon-red); }
+
+        /* PROFILE CARD */
+        .hacker-profile {
+            background: var(--panel-bg); border: 1px solid var(--neon-cyan);
+            border-radius: 15px; padding: 40px; display: flex; gap: 40px;
+            position: relative; overflow: hidden;
+        }
+        .hacker-profile::after {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:2px;
+            background: var(--neon-cyan); animation: scanline 3s infinite linear;
+        }
+        @keyframes scanline { 0%{top:0} 100%{top:100%} }
+
+        .profile-pic-lg {
+            width: 180px; height: 180px; border-radius: 15px; border: 2px solid var(--neon-purple);
+            background: url('https://cdn-icons-png.flaticon.com/512/4140/4140048.png'); background-size: cover;
+            box-shadow: 0 0 30px rgba(188, 19, 254, 0.3);
+        }
+        .badges-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        .tech-badge {
+            padding: 5px 15px; background: rgba(255,255,255,0.05); border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan); font-family: 'Share Tech Mono'; font-size: 0.8rem;
         }
 
-        .glass-card {
-            background: var(--glass-panel); border: var(--border-glow);
-            border-radius: 16px; padding: 30px; margin-bottom: 25px;
-            position: relative; overflow: hidden; transition: 0.3s;
+        /* DATABASE GRID */
+        .db-search {
+            width: 100%; padding: 20px; background: rgba(0,0,0,0.6); border: 1px solid #444;
+            color: #fff; font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 30px;
+            border-radius: 8px; outline: none; transition: 0.3s;
         }
-        .glass-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+        .db-search:focus { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
 
-        /* PROFILE STYLES */
-        .profile-flex { display: flex; gap: 30px; align-items: center; }
-        .avatar {
-            width: 150px; height: 150px; border-radius: 50%; border: 3px solid var(--primary);
-            background: url('https://cdn-icons-png.flaticon.com/512/3011/3011270.png'); /* Hacker Icon */
-            background-size: cover; box-shadow: 0 0 30px rgba(0,240,255,0.3);
+        .masonry-layout {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px;
         }
-        .role-badge {
-            display: inline-block; padding: 5px 12px; border: 1px solid var(--secondary);
-            color: var(--secondary); font-family: 'Share Tech Mono'; font-size: 0.8rem;
-            margin-right: 8px; margin-top: 10px; border-radius: 4px;
-        }
-
-        /* CHEMISTRY GRID */
-        .chem-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
-        }
-        .theory-card {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            padding: 20px; border-radius: 12px; transition: 0.3s;
-        }
-        .theory-card:hover { background: rgba(0,240,255,0.05); border-color: var(--primary); }
-        .theory-title { color: var(--primary); font-family: 'Orbitron'; margin-bottom: 10px; font-size: 1.1rem; }
-        .theory-content { font-family: 'Noto Sans Sinhala'; font-size: 0.95rem; line-height: 1.6; color: #ccc; }
         
-        /* SEARCH BAR */
-        .search-box {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--primary);
-            border-radius: 8px; color: #fff; font-family: 'Orbitron'; font-size: 1.1rem;
-            margin-bottom: 30px; outline: none;
+        .data-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            padding: 25px; border-radius: 12px; transition: 0.3s; position: relative;
         }
-
-        /* PAST PAPER ARCHIVE */
-        .year-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
-        .year-chip {
-            padding: 15px; background: rgba(255,255,255,0.05); text-align: center;
-            font-family: 'Orbitron'; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
-            cursor: pointer; transition: 0.2s;
+        .data-card:hover {
+            background: rgba(0, 243, 255, 0.05); border-color: var(--neon-cyan); transform: translateY(-5px);
         }
-        .year-chip:hover { background: var(--secondary); color: #fff; transform: scale(1.05); }
+        .card-tag {
+            position: absolute; top: 15px; right: 15px; font-size: 0.7rem; padding: 3px 8px;
+            background: var(--neon-purple); color: #fff; font-weight: bold; border-radius: 4px;
+        }
+        .card-title { font-family: 'Orbitron'; color: var(--neon-cyan); margin-bottom: 10px; font-size: 1.1rem; }
+        .card-body { font-family: 'Noto Sans Sinhala'; font-size: 0.95rem; line-height: 1.6; color: #ccc; }
 
-        /* MOBILE OPTIMIZATION */
+        /* PAPER ARCHIVE */
+        .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; }
+        .year-node {
+            padding: 20px; background: rgba(0,0,0,0.5); border: 1px solid #333; text-align: center;
+            font-family: 'Orbitron'; font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .year-node::before {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 3px;
+            background: var(--neon-green); transition: 0.3s;
+        }
+        .year-node:hover::before { width: 100%; }
+        .year-node:hover { color: var(--neon-green); border-color: var(--neon-green); }
+
+        /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
             .sidebar {
-                width: 100%; height: 60px; bottom: 0; top: auto; flex-direction: row;
-                border-right: none; border-top: 1px solid rgba(255,255,255,0.1);
+                width: 100%; height: 70px; flex-direction: row; position: fixed; bottom: 0; left: 0;
+                padding: 10px; justify-content: space-around; background: #000; border-right: none; border-top: 1px solid #333;
             }
-            .nav-tooltip { display: none; }
-            .main-container { margin-left: 0; height: calc(100vh - 60px); }
-            .hero-header { font-size: 2.2rem; }
-            .profile-flex { flex-direction: column; text-align: center; }
-            .intro-title { font-size: 1.5rem; }
+            .user-profile-mini, .sys-status, .sidebar h3, .sidebar span { display: none; }
+            .nav-links { flex-direction: row; overflow: hidden; width: 100%; justify-content: space-between; }
+            .nav-item { flex-direction: column; padding: 5px; font-size: 0.7rem; gap: 5px; text-align: center; border: none; }
+            .nav-item i { font-size: 1.2rem; }
+            
+            .main-content { margin-bottom: 70px; }
+            .section { padding: 20px; }
+            .hacker-profile { flex-direction: column; text-align: center; padding: 20px; }
+            .profile-pic-lg { margin: 0 auto; }
+            .badges-grid { justify-content: center; }
+            .mega-title { font-size: 1.8rem; }
+            .masonry-layout { grid-template-columns: 1fr; }
         }
 
     </style>
 </head>
 <body>
 
-    <div id="intro-overlay">
-        <div class="intro-text-box">
-            <h1 class="intro-title">PROUDLY MADE BY</h1>
-            <h1 class="intro-title" style="color:var(--secondary); font-weight:900;">AMOD GAYANJANA</h1>
-        </div>
-        <div class="intro-sub">INITIALIZING TECHKEY CORE SYSTEMS...</div>
-        <div class="loader-line" id="loader-bar"></div>
+    <div id="boot-screen">
+        <div class="boot-terminal" id="terminal"></div>
+        <h1 class="mega-title" id="boot-title">PROUDLY MADE BY</h1>
+        <h2 class="made-by" id="boot-name">AMOD GAYANJANA</h2>
+        <div class="progress-container"><div class="progress-bar" id="boot-bar"></div></div>
+        <p style="margin-top:10px; font-family:'Share Tech Mono'; color:#555;">Initializing TechKey Core v9.0...</p>
     </div>
 
     <canvas id="bg-canvas"></canvas>
 
-    <nav class="sidebar">
-        <div class="nav-item active" onclick="showPage('home')">
-            <i class="fas fa-home"></i>
-            <span class="nav-tooltip">HOME</span>
-        </div>
-        <div class="nav-item" onclick="showPage('about')">
-            <i class="fas fa-user-secret"></i>
-            <span class="nav-tooltip">PROFILE</span>
-        </div>
-        <div class="nav-item" onclick="showPage('chemistry')">
-            <i class="fas fa-flask"></i>
-            <span class="nav-tooltip">THEORY DB</span>
-        </div>
-        <div class="nav-item" onclick="showPage('archive')">
-            <i class="fas fa-history"></i>
-            <span class="nav-tooltip">PAPERS</span>
-        </div>
-        <div class="nav-item" onclick="showPage('calc')">
-            <i class="fas fa-calculator"></i>
-            <span class="nav-tooltip">TOOLS</span>
-        </div>
-    </nav>
+    <div class="app-container" id="app">
+        
+        <aside class="sidebar">
+            <div class="user-profile-mini">
+                <div class="user-avatar"></div>
+                <div class="user-info">
+                    <h3>AMOD</h3>
+                    <span>ADMIN</span>
+                </div>
+            </div>
 
-    <div class="main-container">
-        <div class="scroll-wrapper">
+            <ul class="nav-links">
+                <li class="nav-item active" onclick="nav('home')"><i class="fas fa-home"></i> HOME</li>
+                <li class="nav-item" onclick="nav('profile')"><i class="fas fa-user-secret"></i> PROFILE</li>
+                <li class="nav-item" onclick="nav('chemistry')"><i class="fas fa-flask"></i> THEORY DB</li>
+                <li class="nav-item" onclick="nav('archive')"><i class="fas fa-history"></i> PAPERS</li>
+                <li class="nav-item" onclick="nav('calc')"><i class="fas fa-calculator"></i> TOOLS</li>
+            </ul>
+
+            <div class="sys-status">
+                SYSTEM ONLINE<br>LATENCY: 12ms
+            </div>
+        </aside>
+
+        <main class="main-content">
             
             <div id="home" class="section active">
-                <h1 class="hero-header">CHEM OS <span style="font-size:1.5rem; color:var(--secondary);">v9.0</span></h1>
-                <p style="font-family:'Share Tech Mono'; margin-bottom:30px; color:#aaa;">ADVANCED LEVEL CHEMISTRY INTELLIGENCE UNIT</p>
-
-                <div class="glass-card">
-                    <h3 style="color:var(--primary); font-family:'Orbitron'; margin-bottom:10px;"><i class="fas fa-bell"></i> DAILY REMINDER</h3>
-                    <p style="font-family:'Noto Sans Sinhala'">මචං, අද දවසේ <strong>රසායනික ගණනය</strong> ප්‍රශ්න 2ක් වත් හදන්න. විශේෂයෙන් <span style="color:var(--accent)">PPM</span> සහ <span style="color:var(--accent)">Back Titration</span> (පසු අනුමාපන) ගැන බලන්න.</p>
+                <div class="header-box">
+                    <h1 class="glitch-text">SYSTEM DASHBOARD</h1>
                 </div>
 
-                <div class="chem-grid">
-                    <div class="theory-card" onclick="showPage('chemistry')">
-                        <div class="theory-title"><i class="fas fa-database"></i> FULL DATABASE</div>
-                        <div class="theory-content">ප්‍රතික්‍රියා, වර්ණ, සූත්‍ර සියල්ල එකම තැනක.</div>
+                <div class="hacker-profile" style="align-items: center; border-color: var(--neon-green);">
+                    <i class="fas fa-satellite-dish" style="font-size: 3rem; color: var(--neon-green);"></i>
+                    <div>
+                        <h2 style="font-family:'Orbitron';">WELCOME BACK, ADMIN</h2>
+                        <p style="font-family:'Noto Sans Sinhala'; margin-top:10px; color:#ccc;">
+                            අද දවසේ රසායනික ගණනය ගැටළු 5ක් විසඳන්න. මතක තියාගන්න, <span style="color:var(--neon-cyan)">"Consistency is the Key to Mastery."</span>
+                        </p>
                     </div>
-                    <div class="theory-card" onclick="showPage('archive')">
-                        <div class="theory-title"><i class="fas fa-file-alt"></i> PAST PAPERS</div>
-                        <div class="theory-content">2000 සිට 2025 දක්වා සියලු ප්‍රශ්න පත්‍ර.</div>
+                </div>
+
+                <div class="masonry-layout" style="margin-top: 30px;">
+                    <div class="data-card" onclick="nav('chemistry')" style="cursor:pointer;">
+                        <div class="card-title"><i class="fas fa-database"></i> FULL DATABASE</div>
+                        <p class="card-body">සිද්ධාන්ත, වර්ණ, ප්‍රතික්‍රියා 100% ආවරණය කර ඇත.</p>
+                    </div>
+                    <div class="data-card" onclick="nav('archive')" style="cursor:pointer;">
+                        <div class="card-title"><i class="fas fa-file-contract"></i> 25 YEARS ARCHIVE</div>
+                        <p class="card-body">2000 - 2025 සියලුම Past Papers මෙතැනින් ලබාගන්න.</p>
                     </div>
                 </div>
             </div>
 
-            <div id="about" class="section">
-                <h1 class="hero-header" style="font-size:2.5rem;">ADMIN PROFILE</h1>
-                
-                <div class="glass-card profile-flex">
-                    <div class="avatar"></div>
-                    <div>
-                        <h2 style="font-family:'Orbitron'; font-size:2rem; color:#fff;">AMOD GAYANJANA</h2>
-                        <h4 style="color:var(--primary); font-family:'Share Tech Mono'; letter-spacing:2px;">TECHKEY FOUNDER | A/L SCHOLAR</h4>
-                        
-                        <p style="margin-top:15px; line-height:1.6; color:#ccc;">
-                            I am a multidisciplinary technology enthusiast and a Physical Science student. 
-                            My passion lies in the intersection of <strong>Software Engineering</strong> and <strong>Cybersecurity</strong>. 
-                            As the Administrator of <span style="color:var(--secondary)">TechKey</span> (Sri Lanka's premier tech community), I strive to empower the next generation of digital creators.
-                        </p>
-
-                        <div style="margin-top:15px;">
-                            <span class="role-badge">ETHICAL HACKER</span>
-                            <span class="role-badge">FULL-STACK DEV</span>
-                            <span class="role-badge">QA TESTER</span>
-                            <span class="role-badge">TECHKEY ADMIN</span>
-                        </div>
-                    </div>
+            <div id="profile" class="section">
+                <div class="header-box">
+                    <h1 class="glitch-text">IDENTITY VERIFIED</h1>
                 </div>
 
-                <div class="glass-card">
-                    <h3 style="color:var(--accent); font-family:'Orbitron'">SYSTEM SKILLS</h3>
-                    <div style="margin-top:15px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Python / Node.js</span><span>95%</span></div>
-                        <div style="width:100%; height:4px; background:#333;"><div style="width:95%; height:100%; background:var(--primary);"></div></div>
+                <div class="hacker-profile">
+                    <div class="profile-pic-lg"></div>
+                    <div>
+                        <h2 style="font-family:'Orbitron'; font-size:2rem; color:#fff;">AMOD GAYANJANA</h2>
+                        <h4 style="color:var(--neon-cyan); font-family:'Share Tech Mono'; letter-spacing:2px; margin-top:5px;">TECHKEY FOUNDER | PHYSICAL SCIENCE SCHOLAR</h4>
                         
-                        <div style="display:flex; justify-content:space-between; margin-bottom:5px; margin-top:15px;"><span>Cyber Security</span><span>90%</span></div>
-                        <div style="width:100%; height:4px; background:#333;"><div style="width:90%; height:100%; background:var(--secondary);"></div></div>
+                        <p style="margin-top:20px; line-height:1.7; color:#ddd; font-size:1.1rem;">
+                            I am a driven <strong>Advanced Level Student</strong> and a passionate technologist operating at the intersection of Code and Science.
+                            My expertise encompasses <strong>Full-Stack Engineering</strong>, <strong>Ethical Hacking</strong>, and <strong>System Architecture</strong>.
+                            <br><br>
+                            As the Administrator of <span style="color:var(--neon-purple)">TechKey</span> (Sri Lanka's premier tech community), I am dedicated to pushing the boundaries of what's possible in the digital realm.
+                        </p>
+
+                        <div class="badges-grid">
+                            <span class="tech-badge">ETHICAL HACKER</span>
+                            <span class="tech-badge">PROGRAMMER</span>
+                            <span class="tech-badge">APP TESTER</span>
+                            <span class="tech-badge">TECHKEY ADMIN</span>
+                            <span class="tech-badge">A/L STUDENT</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div id="chemistry" class="section">
-                <h1 class="hero-header" style="font-size:2.5rem;">KNOWLEDGE CORE</h1>
-                <input type="text" class="search-box" id="searchInput" placeholder="Search (Ex: KMnO4, Gas, Flame)..." onkeyup="filterData()">
+                <div class="header-box">
+                    <h1 class="glitch-text">KNOWLEDGE CORE</h1>
+                </div>
+                <input type="text" class="db-search" id="searchInp" placeholder="Search (e.g. KMnO4, Gas, Flame, Yield)..." onkeyup="filterDB()">
                 
-                <div class="chem-grid" id="content-grid">
+                <div class="masonry-layout" id="db-content">
                     </div>
             </div>
 
             <div id="archive" class="section">
-                <h1 class="hero-header" style="font-size:2.5rem;">ARCHIVE 2000-2025</h1>
-                <p style="margin-bottom:20px; color:#aaa;">Select a year to access the Past Paper database.</p>
-                <div class="year-grid" id="paper-grid">
-                    </div>
+                <div class="header-box">
+                    <h1 class="glitch-text">PAPER ARCHIVE</h1>
+                </div>
+                <p style="margin-bottom:20px; font-family:'Share Tech Mono'; color:var(--neon-green);">SECURE CONNECTION ESTABLISHED TO EXAM DEPT DATABASE...</p>
+                <div class="archive-grid" id="paper-grid"></div>
             </div>
 
             <div id="calc" class="section">
-                <h1 class="hero-header" style="font-size:2.5rem;">QUANTUM TOOLS</h1>
-                <div class="glass-card">
-                    <h3 style="color:var(--primary); font-family:'Orbitron'">MOLE CALCULATOR ($n=m/M$)</h3>
-                    <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
-                        <input type="number" id="mass" placeholder="Mass (g)" style="padding:10px; flex:1; background:#111; border:1px solid #444; color:#fff;">
-                        <input type="number" id="molar" placeholder="Molar Mass (g/mol)" style="padding:10px; flex:1; background:#111; border:1px solid #444; color:#fff;">
+                <div class="header-box">
+                    <h1 class="glitch-text">QUANTUM CALC</h1>
+                </div>
+                <div class="hacker-profile" style="flex-direction: column; align-items: flex-start;">
+                    <h3 style="color:var(--neon-cyan); font-family:'Orbitron'">MOLE CALCULATOR ($n=m/M$)</h3>
+                    <div style="display:flex; gap:10px; width:100%; margin-top:20px; flex-wrap:wrap;">
+                        <input type="number" id="mass" placeholder="Mass (g)" class="db-search" style="flex:1; margin:0;">
+                        <input type="number" id="molar" placeholder="Molar Mass (g/mol)" class="db-search" style="flex:1; margin:0;">
                     </div>
-                    <button onclick="calculate()" style="width:100%; padding:15px; margin-top:10px; background:var(--secondary); border:none; color:#fff; font-family:'Orbitron'; cursor:pointer;">CALCULATE</button>
-                    <div id="result" style="margin-top:15px; font-size:1.5rem; color:var(--primary); text-align:center;">0.00 mol</div>
+                    <button onclick="calculate()" style="width:100%; padding:15px; margin-top:10px; background:var(--neon-purple); border:none; color:#fff; font-family:'Orbitron'; font-size:1.2rem; cursor:pointer;">COMPUTE</button>
+                    <div id="calc-res" style="margin-top:20px; font-size:2rem; color:var(--neon-green); width:100%; text-align:center;">0.0000 mol</div>
                 </div>
             </div>
 
-        </div>
+        </main>
     </div>
 
     <script>
-        // --- 1. INTRO ANIMATION ---
+        // --- 1. BOOT SEQUENCE ---
+        const logs = [
+            "Mounting file system...",
+            "Loading ChemDB v9.0 module...",
+            "Decrypting user profile: Amod Gayanajana...",
+            "Connecting to TechKey Server...",
+            "Rendering 3D Environment...",
+            "ACCESS GRANTED."
+        ];
+
         window.onload = () => {
-            const tl = gsap.timeline();
+            const term = document.getElementById('terminal');
+            let delay = 0;
             
-            tl.to(".intro-title", { y: 0, opacity: 1, duration: 1, stagger: 0.3, ease: "power4.out" })
-              .to(".intro-sub", { opacity: 1, duration: 1 })
-              .to("#loader-bar", { width: "80%", duration: 1.5, ease: "power2.inOut" })
-              .to("#intro-overlay", { y: "-100%", duration: 1, delay: 0.5, ease: "expo.inOut" })
-              .from(".sidebar", { x: -100, duration: 1 }, "-=0.5")
-              .from(".section.active", { opacity: 0, y: 50, duration: 1 }, "-=0.5");
-            
-            renderDB();
-            renderYears();
+            // Log Animation
+            logs.forEach((log, index) => {
+                setTimeout(() => {
+                    term.innerHTML += `> ${log}<br>`;
+                    term.scrollTop = term.scrollHeight;
+                }, delay);
+                delay += 400;
+            });
+
+            // Title Animation
+            setTimeout(() => {
+                gsap.to(".mega-title", { opacity: 1, scale: 1, duration: 1, ease: "back.out(1.7)" });
+                gsap.to(".made-by", { opacity: 1, y: 0, duration: 1, delay: 0.5 });
+                gsap.to("#boot-bar", { width: "100%", duration: 1.5, ease: "power2.inOut", onComplete: launchApp });
+            }, 2500);
         };
+
+        function launchApp() {
+            gsap.to("#boot-screen", { y: "-100%", duration: 1, ease: "expo.inOut", delay: 0.5 });
+            gsap.to(".app-container", { opacity: 1, duration: 1, delay: 1 });
+            renderDB();
+            renderPapers();
+        }
 
         // --- 2. THREE.JS BACKGROUND ---
         const scene = new THREE.Scene();
@@ -320,91 +404,108 @@
         const renderer = new THREE.WebGLRenderer({canvas: document.getElementById('bg-canvas'), alpha: true});
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        // Particles
-        const geometry = new THREE.BufferGeometry();
-        const count = 400;
-        const pos = new Float32Array(count*3);
+        const geo = new THREE.BufferGeometry();
+        const count = 500;
+        const pos = new Float32Array(count * 3);
         for(let i=0; i<count*3; i++) pos[i] = (Math.random()-0.5)*20;
-        geometry.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const material = new THREE.PointsMaterial({size: 0.05, color: 0x00f0ff, transparent: true, opacity: 0.5});
-        const particles = new THREE.Points(geometry, material);
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const mat = new THREE.PointsMaterial({size: 0.03, color: 0x00f3ff, transparent: true, opacity: 0.5});
+        const particles = new THREE.Points(geo, mat);
         scene.add(particles);
         camera.position.z = 5;
 
         function animate() {
             requestAnimationFrame(animate);
-            particles.rotation.y += 0.002;
-            particles.rotation.x += 0.001;
+            particles.rotation.y += 0.001;
+            particles.rotation.x += 0.0005;
             renderer.render(scene, camera);
         }
         animate();
 
-        // --- 3. DATABASE (The "Nook & Cranny") ---
-        const db = [
-            // CALCULATIONS
-            { t: "මවුල ගණනය (Mole)", d: "1. ස්කන්ධයෙන්: n = m/M<br>2. පරිමාවෙන් (ද්‍රාවණ): n = CV<br>3. පරිමාවෙන් (වායු STP): n = V/22.4" },
-            { t: "සාන්ද්‍රණය (Conc)", d: "C = n/V (ඒකකය: mol dm⁻³)<br>ඝනත්වයෙන් සෙවීම: C = 10ρw / M" },
-            { t: "PPM (Parts Per Million)", d: "ppm = ද්‍රාව්‍ය ස්කන්ධය (mg) / ද්‍රාවණ පරිමාව (dm³)<br>ජලයේ කඨිනත්වය සෙවීමට යොදාගනී." },
-            { t: "පසු අනුමාපන (Back Titration)", d: "වැඩිපුර දමන ලද ප්‍රතික්‍රියක ප්‍රමාණය, වෙනත් ද්‍රාවණයක් මගින් අනුමාපනය කර සොයා ගනී." },
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 3. DATABASE (The "All Nooks & Crannies" Data) ---
+        const dbData = [
+            // BASIC CALCS
+            { t: "Mole Concept (මවුල)", c: "CALC", d: "1. ස්කන්ධයෙන්: $$n = m/M$$<br>2. ද්‍රාවණ: $$n = CV$$<br>3. වායු (STP): $$n = V/22.4$$<br>4. අංශු: $$n = N/L$$" },
+            { t: "Concentration (සාන්ද්‍රණය)", c: "CALC", d: "$$C = n/V$$ ($mol \\ dm^{-3}$)<br>ඝනත්වයෙන්: $$C = \\frac{10 \\times \\rho \\times w\\%}{M}$$<br>$\\rho$ = ඝනත්වය ($g \\ cm^{-3}$)" },
+            { t: "Dilution (තනුක කිරීම)", c: "CALC", d: "$$C_1V_1 = C_2V_2$$<br>ජලය එකතු කළ විට මවුල ගණන නියතව පවතී.<br>මිශ්‍රණ: $$C_{new} = \\frac{n_1+n_2}{V_1+V_2}$$" },
+            { t: "PPM Calculation", c: "CALC", d: "$$ppm = \\frac{\\text{mass (mg)}}{\\text{volume (dm}^3)}$$<br>ජලයේ දෘඪතාවය මැනීමට යොදාගනී." },
+            { t: "Percentage Yield (ඵලදාව)", c: "CALC", d: "$$\\text{Yield} \\% = \\frac{\\text{Actual Mass}}{\\text{Theoretical Mass}} \\times 100$$" },
             
             // INORGANIC
-            { t: "Flame Colors (S Block)", d: "Li: ක්‍රිම්සන් රතු | Na: රන්වන් කහ | K: ලිලැක් | Ca: ගඩොල් රතු | Ba: ඇපල් කොළ" },
-            { t: "Halide Precipitates", d: "AgCl: සුදු (dil NH₃ දියවේ)<br>AgBr: ලා කහ (conc NH₃ දියවේ)<br>AgI: තද කහ (දිය නොවේ)" },
-            { t: "Nitrate Test", d: "දුඹුරු වලලු පරීක්ෂාව: [Fe(H₂O)₅NO]²⁺ සංකීර්ණය සාදයි." },
+            { t: "Flame Test (දැල්ලේ වර්ණ)", c: "INORG", d: "Li: Crimson Red | Na: Golden Yellow | K: Lilac | Ca: Brick Red | Sr: Crimson | Ba: Apple Green | Cu: Blue-Green" },
+            { t: "Halide Precipitates", c: "INORG", d: "$AgCl$: සුදු (dil NH3 දියවේ)<br>$AgBr$: ලා කහ (conc NH3 දියවේ)<br>$AgI$: තද කහ (දිය නොවේ)" },
+            { t: "Nitrate Test", c: "INORG", d: "Brown Ring Test (දුඹුරු වලලු).<br>සංකීර්ණය: $$[Fe(H_2O)_5NO]^{2+}$$" },
+            { t: "Sulfide Colors", c: "INORG", d: "Black: $CuS, PbS, Ag_2S, HgS, NiS, CoS, FeS$<br>Yellow: $CdS, As_2S_3$<br>Orange: $Sb_2S_3$<br>White: $ZnS$" },
+            { t: "Ammonia Test", c: "INORG", d: "HCl කූරක් ඇල්ලූ විට සුදු දුමාරයක් (White Fumes) පිටවේ ($NH_4Cl$)." },
             
             // REDOX
-            { t: "KMnO₄ (Acidic)", d: "දම් පාට → අවර්ණ (Mn²⁺) | ඔක්සිකාරක අංක වෙනස: 5" },
-            { t: "K₂Cr₂O₇ (Acidic)", d: "තැඹිලි → කොළ (Cr³⁺) | ඔක්සිකාරක අංක වෙනස: 6" },
-            { t: "Iodometry (Starch)", d: "තද නිල් → අවර්ණ (I₂ + 2S₂O₃²⁻ → 2I⁻ + S₄O₆²⁻)" },
+            { t: "KMnO4 (Acidic)", c: "REDOX", d: "Color: Purple $\\to$ Colorless ($Mn^{2+}$)<br>Eq: $$MnO_4^- + 8H^+ + 5e \\to Mn^{2+} + 4H_2O$$" },
+            { t: "KMnO4 (Basic)", c: "REDOX", d: "Color: Purple $\\to$ Brown ppt ($MnO_2$)<br>Eq: $$MnO_4^- + 2H_2O + 3e \\to MnO_2 + 4OH^-$$" },
+            { t: "K2Cr2O7", c: "REDOX", d: "Color: Orange $\\to$ Green ($Cr^{3+}$)<br>Eq: $$Cr_2O_7^{2-} + 14H^+ + 6e \\to 2Cr^{3+} + 7H_2O$$" },
+            { t: "Iodometry", c: "REDOX", d: "Thiosulfate ($S_2O_3^{2-}$) සමග.<br>Eq: $$2S_2O_3^{2-} + I_2 \\to S_4O_6^{2-} + 2I^-$$<br>Indicator: Starch (Dark Blue $\\to$ Colorless)" },
+            
+            // GAS
+            { t: "Ideal Gas Law", c: "GAS", d: "$$PV = nRT$$<br>$R = 8.314 J \\ mol^{-1} \\ K^{-1}$<br>$T$ අනිවාර්යයෙන් Kelvin වලින් තබන්න ($^0C + 273$)." },
+            { t: "Dalton's Law", c: "GAS", d: "$$P_{total} = P_1 + P_2 + ...$$<br>$$P_{gas} = P_{total} \\times \\text{Mole Fraction}$$<br>ජලය මගින් විස්ථාපනය: $$P_{gas} = P_{atm} - P_{H2O}$$" },
 
             // ORGANIC
-            { t: "Tollens Test", d: "Aldehyde පමණක් රිදී කැඩපතක් ලබා දෙයි (Ag)." },
-            { t: "Fehling Test", d: "Aldehyde රතු අවක්ෂේපයක් ලබා දෙයි (Cu₂O)." },
-            { t: "Lucas Reagent", d: "ZnCl₂/HCl. Alcohol හඳුනාගැනීමට.<br>Tertiary: ක්ෂණිකව | Secondary: වි. 5කින් | Primary: රත් කළ විට" }
+            { t: "Tollens Test", c: "ORG", d: "Aldehyde හඳුනාගැනීම.<br>Result: රිදී කැඩපතක් (Silver Mirror - Ag)." },
+            { t: "Fehling Test", c: "ORG", d: "Aldehyde හඳුනාගැනීම.<br>Result: රතු අවක්ෂේපයක් ($Cu_2O$)." },
+            { t: "Lucas Reagent", c: "ORG", d: "ZnCl2/conc HCl. Alcohol වර්ගීකරණයට.<br>Tertiary: Instant turbidity.<br>Secondary: 5 mins.<br>Primary: Heat only." },
+            { t: "Brady's Reagent", c: "ORG", d: "2,4-DNP. Aldehyde/Ketone දෙකම තැඹිලි පාට අවක්ෂේප ලබා දේ." }
         ];
 
-        // --- 4. RENDER FUNCTIONS ---
         function renderDB(filter = "") {
-            const container = document.getElementById('content-grid');
-            container.innerHTML = "";
-            const filtered = db.filter(item => item.t.toLowerCase().includes(filter) || item.d.toLowerCase().includes(filter));
+            const grid = document.getElementById('db-content');
+            grid.innerHTML = "";
+            const filtered = dbData.filter(i => i.t.toLowerCase().includes(filter) || i.d.toLowerCase().includes(filter));
             
             filtered.forEach(item => {
-                container.innerHTML += `
-                    <div class="theory-card">
-                        <div class="theory-title">${item.t}</div>
-                        <div class="theory-content">${item.d}</div>
+                let color = item.c === "CALC" ? "#ff003c" : item.c === "INORG" ? "#00f3ff" : "#bc13fe";
+                grid.innerHTML += `
+                    <div class="data-card">
+                        <span class="card-tag" style="background:${color}">${item.c}</span>
+                        <div class="card-title">${item.t}</div>
+                        <div class="card-body">${item.d}</div>
                     </div>
                 `;
             });
+            if(window.MathJax) MathJax.typesetPromise();
         }
 
-        function filterData() {
-            renderDB(document.getElementById('searchInput').value.toLowerCase());
+        function filterDB() {
+            renderDB(document.getElementById('searchInp').value.toLowerCase());
         }
 
-        function renderYears() {
+        // --- 4. PAPERS & CALC ---
+        function renderPapers() {
             const grid = document.getElementById('paper-grid');
             for(let y=2025; y>=2000; y--) {
-                grid.innerHTML += `<div class="year-chip" onclick="alert('${y} Paper Loading...')">${y}</div>`;
+                grid.innerHTML += `<div class="year-node" onclick="alert('${y} Paper Downloading...')">${y}</div>`;
             }
         }
 
         function calculate() {
             const m = parseFloat(document.getElementById('mass').value);
             const mm = parseFloat(document.getElementById('molar').value);
-            if(m && mm) document.getElementById('result').innerText = (m/mm).toFixed(4) + " mol";
+            if(m && mm) document.getElementById('calc-res').innerText = (m/mm).toFixed(4) + " mol";
         }
 
         // --- 5. NAVIGATION ---
-        function showPage(id) {
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
+        function nav(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            const map = { 'home':0, 'about':1, 'chemistry':2, 'archive':3, 'calc':4 };
-            document.querySelectorAll('.nav-item')[map[id]].classList.add('active');
+            // Map IDs to Nav Index
+            const idx = ['home','profile','chemistry','archive','calc'].indexOf(id);
+            document.querySelectorAll('.nav-item')[idx].classList.add('active');
         }
 
     </script>
